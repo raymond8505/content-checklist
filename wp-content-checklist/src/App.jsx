@@ -1,21 +1,39 @@
-import { createContext, useContext } from 'react'
-import { createStore, useStore } from 'zustand'
 
-const store = createStore({
-  posts : []
-})
+import { useEffect } from 'react';
+import { useStore } from './store';
 
-const StoreContext = createContext()
+const MainBody = () => {
+  
+  const posts = useStore(state => state.posts)
+  const setPosts = useStore(state => state.setPosts)
+
+  console.log({posts,setPosts});
+
+  useEffect(()=>{
+    console.log({posts});
+  },[posts])
+
+  return <div>
+    <button onClick={()=>{
+      setPosts([
+        ...posts,
+        "another post"
+      ])
+  }}>more tests plz</button>
+  <ul>
+    {posts.map((post,i) => <li key={i}>{post}</li>)}
+  </ul>
+  </div>
+}
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-    <StoreContext.Provider value={store}>
-    <div className="App">
-      
-    </div>
-    </StoreContext.Provider>
+    
+      <div className="App">
+        <MainBody />
+      </div>
+    
   )
 }
 

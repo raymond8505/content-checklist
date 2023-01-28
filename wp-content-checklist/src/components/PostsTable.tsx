@@ -5,7 +5,7 @@ import styled from "@emotion/styled";
 const Table = styled.table`
   text-align: left;
   color: black;
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   border-spacing: 0;
   padding: 0;
@@ -26,10 +26,10 @@ const Table = styled.table`
         border-right: 1px solid #bbb;
       }
     }
+  }
 
-    &:nth-of-type(odd) * {
-      background: #ddd;
-    }
+  tbody tr:nth-of-type(odd) * {
+    background: #ddd;
   }
 
   .col--title {

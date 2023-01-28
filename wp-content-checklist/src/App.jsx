@@ -1,18 +1,15 @@
 import { useEffect } from 'react';
+import { useServerUpdate } from './api';
 import { MainBody } from './components/MainBody';
-import { useStore } from './store';
+
+
 
 function App() {
 
-  const {setPosts,setColumns} = useStore()
+  const updateFromServer = useServerUpdate()
 
   useEffect(()=>{
-    fetch('http://localhost/raymondsfood/wp-admin/admin-ajax.php?action=wpcc_init').then(resp => {
-      resp.json().then(json => {
-        setPosts(json.posts)
-        setColumns(json.columns)
-      })
-    })
+    updateFromServer()
   },[]);
 
   return (

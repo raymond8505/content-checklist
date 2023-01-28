@@ -1,18 +1,28 @@
 import { useStore } from '../store';
 import {css} from '@emotion/css'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import PostsTable from './PostsTable';
+import CreateColumnModal from './createColumnModal';
+import { useCallback } from 'react';
 
 export const MainBody = () => {
-    
+
+    const [showCreateColumn,setShowCreateColumn] = useState(true)
+    const onCreateColumnClick = useCallback(()=>{
+        setShowCreateColumn(true)
+    })
+    const onCloseCreateColumnClick = useCallback(()=>{
+        setShowCreateColumn(false)
+    })
     return <div className={css`
         background: white;
         width: 100vw;
         height: 100vh;
     `}>
         <header>
-            <button>Create Column</button>
+            <button onClick={onCreateColumnClick}>Create Column</button>
         </header>
         <PostsTable />
+        {showCreateColumn && <CreateColumnModal onClose={onCloseCreateColumnClick} />}
     </div>
   }

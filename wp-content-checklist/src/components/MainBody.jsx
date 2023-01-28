@@ -1,17 +1,16 @@
-const MainBody = () => {
+import { useStore } from '../store';
+import {css} from '@emotion/css'
+
+export const MainBody = () => {
   
     const posts = useStore(state => state.posts)
     const setPosts = useStore(state => state.setPosts)
   
-    return <div>
-      <button onClick={()=>{
-        setPosts([
-          ...posts,
-          "another post"
-        ])
-    }}>more tests plz</button>
-    <ul>
-      {posts.map((post,i) => <li key={i}>{post}</li>)}
-    </ul>
+    return <div css={css`
+        width: 500px;
+        height: 500px;
+        background: white;
+        
+        `}>
     </div>
   }

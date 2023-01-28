@@ -9,4 +9,5 @@ export const Button = styled.button`
   padding: 0.4em 1em;
   margin-right: 0.4em;
   outline: none;
+  cursor: pointer;
 `;

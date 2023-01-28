@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from '@emotion/styled'
 
 const Dialog = styled.dialog`
@@ -29,6 +29,20 @@ const DialogHeader = styled.div`
 
 const Modal = ({title,children,onClose = ()=>{}}) => {
 
+    useEffect(()=>{
+        const escListener = (e) => {
+            if(e.key === 'Escape')
+            {
+                onClose()
+            }
+        }
+
+        window.addEventListener('keydown',escListener)
+
+        return ()=>{
+            window.removeEventListener('keydown',escListener)
+        }
+    },[]);
     return (<Dialog>
         <DialogBody>
             <DialogHeader>

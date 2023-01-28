@@ -2,7 +2,7 @@ import { useStore } from '../store';
 import {css} from '@emotion/css'
 import { useEffect, useState } from 'react';
 import PostsTable from './PostsTable';
-import CreateColumnModal from './createColumnModal';
+import CreateColumnModal from './modals/CreateColumnModal';
 import { useCallback } from 'react';
 
 export const MainBody = () => {

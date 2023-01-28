@@ -1,8 +1,8 @@
 import React, { useCallback, useRef, useState } from "react";
-import { createColumn, useServerUpdate } from "../api";
-import { Button } from "./common/Button";
-import { Error } from "./common/Error";
-import { Input } from "./common/Input";
+import { createColumn, useServerUpdate } from "../../api";
+import { Button } from "../common/Button";
+import { Error } from "../common/Error";
+import { Input } from "../common/Input";
 import Modal from "./Modal";
 
 const CreateColumnModal = ({onClose}) => {

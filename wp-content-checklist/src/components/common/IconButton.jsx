@@ -9,16 +9,16 @@ const Button = styled.button`
     background: none;
     cursor: pointer;
     height: 1.5em;
-    
+
     img
     {
         height: 100%;
     }
 `
 
-const IconButton = ({src,alt}) => {
+const IconButton = ({src,alt,onClick = () => {}}) => {
 
-    return (<Button title={alt}>
+    return (<Button title={alt} onClick={onClick}>
         <Icon src={src} role="presentation" />
     </Button>);
 }

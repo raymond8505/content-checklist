@@ -1,6 +1,11 @@
 import React from "react";
 import { useStore } from "../store";
 import styled from "@emotion/styled";
+import deleteIcon from "../assets/icons/delete.svg";
+import fixIcon from "../assets/icons/fix.svg";
+import checkIcon from "../assets/icons/check.svg";
+import { Icon } from "./common/Icon";
+import IconButton from "./common/IconButton";
 
 const Table = styled.table`
   text-align: left;
@@ -18,18 +23,19 @@ const Table = styled.table`
   }
 
   tr {
-    * {
-      border-bottom: 1px solid #bbb;
+    > td,
+    > th {
+      border-bottom: 1px solid #ddd;
       padding: 0.2em 0.5em;
 
       &:not(:last-child) {
-        border-right: 1px solid #bbb;
+        border-right: 1px solid #ddd;
       }
     }
   }
 
   tbody tr:nth-of-type(odd) * {
-    background: #ddd;
+    background: #eaeaea;
   }
 
   .col--title {
@@ -57,9 +63,36 @@ const PostsTable = ({}) => {
     }
   };
 
+  const ControlRow = styled.tr`
+    &,
+    td {
+      border-bottom: none;
+    }
+  `;
+
+  const ControlCell = styled.td`
+    text-align: right;
+
+    button:not(:first-child) {
+      margin-left: 0.4em;
+    }
+  `;
   return (
     <Table>
       <thead>
+        <ControlRow>
+          <td className="col--id"></td>
+          <td className="col--title"></td>
+          {columns.map((column, i) => {
+            return (
+              <ControlCell key={`column-header--control${i}`}>
+                <IconButton src={checkIcon} alt="Check Column" />
+                <IconButton src={fixIcon} alt="Fix Column" />
+                <IconButton src={deleteIcon} alt="Delete Column" />
+              </ControlCell>
+            );
+          })}
+        </ControlRow>
         <tr>
           <th className="col--id">ID</th>
           <th className="col--title">Post</th>

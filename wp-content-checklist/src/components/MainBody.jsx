@@ -7,7 +7,7 @@ import { useCallback } from 'react';
 
 export const MainBody = () => {
 
-    const [showCreateColumn,setShowCreateColumn] = useState(true)
+    const [showCreateColumn,setShowCreateColumn] = useState(false)
     const onCreateColumnClick = useCallback(()=>{
         setShowCreateColumn(true)
     })

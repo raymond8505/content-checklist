@@ -22,6 +22,9 @@ const DialogBody = styled.div`
 const DialogHeader = styled.div`
     display: flex;
     justify-content: space-between;
+    margin-bottom: 1em;
+    padding-bottom: .4em;
+    border-bottom: 1px solid #999;
 `
 
 const Modal = ({title,children,onClose = ()=>{}}) => {

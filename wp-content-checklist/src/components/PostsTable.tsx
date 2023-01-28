@@ -44,6 +44,19 @@ const Table = styled.table`
 const PostsTable = ({}) => {
   const { posts, columns } = useStore();
 
+  const columnVal = (post, column) => {
+    switch (post.columns[column.slug]) {
+      case -1:
+        return "N/A";
+      case 0:
+        return "No";
+      case 1:
+        return "Yes";
+      default:
+        return "";
+    }
+  };
+
   return (
     <Table>
       <thead>
@@ -51,7 +64,7 @@ const PostsTable = ({}) => {
           <th className="col--id">ID</th>
           <th className="col--title">Post</th>
           {columns.map((column, i) => {
-            return <th key={i}>{column.name}</th>;
+            return <th key={`column-header${i}`}>{column.name}</th>;
           })}
         </tr>
       </thead>
@@ -61,6 +74,11 @@ const PostsTable = ({}) => {
             <tr key={post.ID}>
               <th className="col--id">{post.ID}</th>
               <th className="col--title">{post.title}</th>
+              {columns.map((column, i) => {
+                return (
+                  <td key={`post-column-${i}`}>{columnVal(post, column)}</td>
+                );
+              })}
             </tr>
           );
         })}

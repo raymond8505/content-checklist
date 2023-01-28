@@ -152,7 +152,8 @@ function check_column()
     if(function_exists($func))
     {
         //call_user_func($func,)
-        echo 'FUNC EXISTS';
+        echo '{}';
+        http_response_code(200);
     }
     else
     {

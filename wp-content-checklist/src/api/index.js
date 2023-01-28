@@ -60,10 +60,11 @@ export const checkColumn = async (slug) => {
   const form = new FormData();
   form.append("slug", slug);
 
-  return handleApiResponse(
-    await apiFetch("check_column", {
-      method: "POST",
-      body: form,
-    })
-  );
+  const resp = await apiFetch("check_column", {
+    method: "POST",
+    body: form,
+  });
+
+  console.log(resp.ok);
+  return handleApiResponse(resp);
 };

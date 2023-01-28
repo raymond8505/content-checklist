@@ -119,8 +119,11 @@ const PostsTable = ({}) => {
                     alt="Check Column"
                     onClick={() => {
                       checkColumn(column.slug)
-                        .then((resp) => {})
+                        .then((resp) => {
+                          console.log(resp);
+                        })
                         .catch((e) => {
+                          console.log(e);
                           showCodeModal(e.error);
                         });
                     }}

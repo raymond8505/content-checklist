@@ -75,7 +75,7 @@ function create_column()
     if($name === '') 
     {
         http_response_code(400);
-        die ('{"error" : "name is empty"}');
+        die ('{"error":"name is empty"}');
     }
 
     $columns = get_columns();
@@ -94,7 +94,7 @@ function create_column()
     if($column_exists)
     {
         http_response_code(400);
-        die ('{"error" : "column exists"}');
+        die ('{"error":"column exists"}');
     }
 
     $column = [
@@ -142,7 +142,28 @@ function delete_column()
 
     die('{success:"Success!"}');
 }
+
+function check_column()
+{
+    $slug = $_POST['slug'];
+
+    $func = 'wpcc_check_' . str_replace('-','_',$slug);
+
+    if(function_exists($func))
+    {
+        //call_user_func($func,)
+        echo 'FUNC EXISTS';
+    }
+    else
+    {
+        http_response_code(400);
+        die('{"error":"' . $func . '"}');
+    }
+
+    die();
+}
 add_action('admin_menu','init');
 add_action($action_root . '_wpcc_init','init_client');
 add_action($action_root . '_wpcc_create_column','create_column');
 add_action($action_root . '_wpcc_delete_column','delete_column');
+add_action($action_root . '_wpcc_check_column','check_column');

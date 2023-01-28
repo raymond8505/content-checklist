@@ -6,7 +6,6 @@ export const apiHost =
     : ajaxurl;
 
 export const apiFetch = (action, opts = {}) => {
-  console.log({ opts });
   return fetch(`${apiHost}?action=wpcc_${action}`, opts);
 };
 /**
@@ -55,4 +54,16 @@ export const deleteColumn = async (slug) => {
     method: "POST",
     body: form,
   });
+};
+
+export const checkColumn = async (slug) => {
+  const form = new FormData();
+  form.append("slug", slug);
+
+  return handleApiResponse(
+    await apiFetch("check_column", {
+      method: "POST",
+      body: form,
+    })
+  );
 };

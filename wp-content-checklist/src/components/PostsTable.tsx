@@ -7,6 +7,8 @@ import checkIcon from "../assets/icons/check.svg";
 import { Icon } from "./common/Icon";
 import IconButton from "./common/IconButton";
 import { DeleteColumnModal } from "./modals/DeleteColumnModal";
+import { checkColumn } from "../api";
+import { CopyFunctionModal } from "./modals/CopyFunctionModal";
 
 const Table = styled.table`
   text-align: left;
@@ -82,6 +84,9 @@ const PostsTable = ({}) => {
   const [shouldShowDeleteModal, setShouldShowDeleteModal] = useState(false);
   const [columnToDelete, setColumnToDelete] = useState();
 
+  const [shouldShowCodeModal, setShouldShowCodeModal] = useState(false);
+  const [functiontoCopy, setFunctionToCopy] = useState(null);
+
   const showDeleteModal = (column) => {
     setColumnToDelete(column);
     setShouldShowDeleteModal(true);
@@ -89,6 +94,15 @@ const PostsTable = ({}) => {
 
   const onDeleteColumnModalClick = () => {
     setShouldShowDeleteModal(false);
+  };
+
+  const onCopyFunctionClose = () => {
+    setShouldShowCodeModal(false);
+  };
+
+  const showCodeModal = (functionName) => {
+    setFunctionToCopy(functionName);
+    setShouldShowCodeModal(true);
   };
   return (
     <>
@@ -100,7 +114,17 @@ const PostsTable = ({}) => {
             {columns.map((column, i) => {
               return (
                 <ControlCell key={`column-header--control${i}`}>
-                  <IconButton src={checkIcon} alt="Check Column" />
+                  <IconButton
+                    src={checkIcon}
+                    alt="Check Column"
+                    onClick={() => {
+                      checkColumn(column.slug)
+                        .then((resp) => {})
+                        .catch((e) => {
+                          showCodeModal(e.error);
+                        });
+                    }}
+                  />
                   <IconButton src={fixIcon} alt="Fix Column" />
                   <IconButton
                     src={deleteIcon}
@@ -141,6 +165,12 @@ const PostsTable = ({}) => {
         <DeleteColumnModal
           column={columnToDelete}
           onClose={onDeleteColumnModalClick}
+        />
+      )}
+      {shouldShowCodeModal && (
+        <CopyFunctionModal
+          functionName={functiontoCopy}
+          onClose={onCopyFunctionClose}
         />
       )}
     </>

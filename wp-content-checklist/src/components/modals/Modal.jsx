@@ -56,4 +56,13 @@ const Modal = ({title,children,onClose = ()=>{}}) => {
     </Dialog>);
 }
 
+export const ModalHint = styled.div`
+    font-size: .8em;
+    border: 1px solid #cb9d6f;
+    color: #cb9d6f;
+    padding: .4em 1em;
+    background: rgba(203 157 111 / 10%);
+    border-radius: 2px;
+`
+
 export default Modal;

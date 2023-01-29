@@ -143,6 +143,23 @@ function delete_column()
     die('{success:"Success!"}');
 }
 
+function check_posts($func)
+{
+    $query = new WP_Query([
+        'post_type'=>'post',
+        'posts_per_page'=>-1
+    ]);
+
+    $results = [];
+
+    foreach($query->posts as $post)
+    {
+        $results[] = call_user_func($func,$post->ID);
+    }
+
+    return $results;
+}
+
 function check_column()
 {
     $slug = $_POST['slug'];
@@ -151,8 +168,27 @@ function check_column()
 
     if(function_exists($func))
     {
-        //call_user_func($func,)
-        echo '{}';
+        check_posts($func);
+        http_response_code(200);
+    }
+    else
+    {
+        http_response_code(400);
+        die('{"error":"' . $func . '"}');
+    }
+
+    die();
+}
+
+function fix_column()
+{
+    $slug = $_POST['slug'];
+
+    $func = 'wpcc_fix_' . str_replace('-','_',$slug);
+
+    if(function_exists($func))
+    {
+        //fix_posts($func);
         http_response_code(200);
     }
     else
@@ -168,3 +204,4 @@ add_action($action_root . '_wpcc_init','init_client');
 add_action($action_root . '_wpcc_create_column','create_column');
 add_action($action_root . '_wpcc_delete_column','delete_column');
 add_action($action_root . '_wpcc_check_column','check_column');
+add_action($action_root . '_wpcc_fix_column','fix_column');

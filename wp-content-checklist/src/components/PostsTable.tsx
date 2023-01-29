@@ -7,7 +7,7 @@ import checkIcon from "../assets/icons/check.svg";
 import { Icon } from "./common/Icon";
 import IconButton from "./common/IconButton";
 import { DeleteColumnModal } from "./modals/DeleteColumnModal";
-import { checkColumn } from "../api";
+import { checkColumn, fixColumn } from "../api";
 import { CopyFunctionModal } from "./modals/CopyFunctionModal";
 
 const Table = styled.table`
@@ -128,7 +128,20 @@ const PostsTable = ({}) => {
                         });
                     }}
                   />
-                  <IconButton src={fixIcon} alt="Fix Column" />
+                  <IconButton
+                    src={fixIcon}
+                    alt="Fix Column"
+                    onClick={() => {
+                      fixColumn(column.slug)
+                        .then((resp) => {
+                          console.log(resp);
+                        })
+                        .catch((e) => {
+                          console.log(e);
+                          showCodeModal(e.error);
+                        });
+                    }}
+                  />
                   <IconButton
                     src={deleteIcon}
                     alt="Delete Column"

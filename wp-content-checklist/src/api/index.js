@@ -65,6 +65,17 @@ export const checkColumn = async (slug) => {
     body: form,
   });
 
-  console.log(resp.ok);
+  return handleApiResponse(resp);
+};
+
+export const fixColumn = async (slug) => {
+  const form = new FormData();
+  form.append("slug", slug);
+
+  const resp = await apiFetch("fix_column", {
+    method: "POST",
+    body: form,
+  });
+
   return handleApiResponse(resp);
 };

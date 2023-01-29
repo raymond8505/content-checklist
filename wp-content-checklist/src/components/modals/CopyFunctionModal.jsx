@@ -5,7 +5,7 @@ import Modal, { ModalHint } from "./Modal";
 
 export const CopyFunctionModal = ({functionName,onClose}) => {
     return (
-        <Modal title={`Check Function Does Not Exist`} onClose={onClose}>
+        <Modal title={`${functionName} Does Not Exist`} onClose={onClose}>
             <textarea readOnly="readonly" css={css`
                 width: 100%;
                 height: 18em;

@@ -143,21 +143,9 @@ function delete_column()
     die('{success:"Success!"}');
 }
 
-function check_posts($func)
-{
-    $query = new WP_Query([
-        'post_type'=>'post',
-        'posts_per_page'=>-1
-    ]);
-
-    $results = [];
-
-    foreach($query->posts as $post)
-    {
-        $results[] = call_user_func($func,$post->ID);
-    }
-
-    return $results;
+function check_posts($func,$slug)
+{+
+    call_user_func($func,$slug);
 }
 
 function check_column()
@@ -168,8 +156,8 @@ function check_column()
 
     if(function_exists($func))
     {
-        check_posts($func);
-        http_response_code(200);
+        check_posts($func,$slug);
+        die('{"success":"' . $slug . '"}');
     }
     else
     {
@@ -189,7 +177,6 @@ function fix_column()
     if(function_exists($func))
     {
         //fix_posts($func);
-        http_response_code(200);
     }
     else
     {
@@ -198,6 +185,23 @@ function fix_column()
     }
 
     die();
+}
+
+function wpcc_set_column($slug,$id,$val)
+{
+    $has_meta = metadata_exists('post',$id,'wpcc_columns');
+    $columns = $has_meta ? get_post_meta( $id, 'wpcc_columns', true ) : [];
+
+    $columns[$slug] = $val;
+
+    if($has_meta)
+    {
+        update_post_meta( $id,'wpcc_columns' , $columns );
+    }
+    else
+    {
+        add_post_meta( $id,'wpcc_columns' , $columns );
+    }
 }
 add_action('admin_menu','init');
 add_action($action_root . '_wpcc_init','init_client');

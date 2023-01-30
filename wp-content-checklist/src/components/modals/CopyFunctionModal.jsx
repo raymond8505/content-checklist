@@ -15,9 +15,9 @@ export const CopyFunctionModal = ({functionName,onClose}) => {
                 padding: 1em;
                 border-radius: 4px;
             `} value={
-`function ${functionName} ($post_id){
+`function ${functionName} ($slug){
     /**
-     * check or fix logic here
+     * check or fix logic heregit 
      * 
      * check functions return
      *  - null (Unknown)

@@ -50,6 +50,20 @@ const Table = styled.table`
   }
 `;
 
+const ColumnCell = styled.td`
+  color: #fff;
+  background: ${(props) => {
+    switch (props.value) {
+      case -1:
+        return "black !important;";
+      case 0:
+        return "#900 !important;";
+      case 1:
+        return "#090 !important;";
+    }
+  }};
+`;
+
 const PostsTable = ({}) => {
   const { posts, columns } = useStore();
   const updateFromServer = useServerUpdate();
@@ -170,7 +184,12 @@ const PostsTable = ({}) => {
                 <th className="col--title">{post.title}</th>
                 {columns.map((column, i) => {
                   return (
-                    <td key={`post-column-${i}`}>{columnVal(post, column)}</td>
+                    <ColumnCell
+                      key={`post-column-${i}`}
+                      value={post.columns[column.slug]}
+                    >
+                      {columnVal(post, column)}
+                    </ColumnCell>
                   );
                 })}
               </tr>

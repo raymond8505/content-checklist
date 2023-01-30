@@ -41,6 +41,9 @@ const Table = styled.table`
     &:nth-of-type(odd) > td {
       background: #dedede;
     }
+    &:nth-of-type(even) > td {
+      background: #fff;
+    }
 
     :hover td {
       background: #bbb;
@@ -49,10 +52,18 @@ const Table = styled.table`
 
   .col--title {
     width: 20%;
+    left: 6ch;
   }
 
   .col--id {
     width: 6ch;
+    left: 0;
+  }
+
+  .col--title,
+  .col--id {
+    position: sticky;
+    z-index: 2;
   }
 `;
 
@@ -116,6 +127,8 @@ const PostsTable = ({}) => {
   const [shouldShowCodeModal, setShouldShowCodeModal] = useState(false);
   const [functiontoCopy, setFunctionToCopy] = useState(null);
 
+  const [postNameLeft, setPostNameLeft] = useState("6ch");
+
   const showDeleteModal = (column) => {
     setColumnToDelete(column);
     setShouldShowDeleteModal(true);
@@ -133,6 +146,7 @@ const PostsTable = ({}) => {
     setFunctionToCopy(functionName);
     setShouldShowCodeModal(true);
   };
+
   return (
     <>
       <Table>
@@ -184,7 +198,9 @@ const PostsTable = ({}) => {
           </ControlRow>
           <tr>
             <th className="col--id">ID</th>
-            <th className="col--title">Post</th>
+            <th className="col--title" style={{ left: postNameLeft }}>
+              Post
+            </th>
             {columns.map((column, i) => {
               return <th key={`column-header${i}`}>{column.name}</th>;
             })}
@@ -195,7 +211,7 @@ const PostsTable = ({}) => {
             return (
               <tr key={post.ID}>
                 <th className="col--id">{post.ID}</th>
-                <td className="col--title">
+                <td className="col--title" style={{ left: postNameLeft }}>
                   <TitleCell>
                     <a href={post.urls.edit}>{post.title}</a>
                     <a href={post.urls.view}>(view)</a>

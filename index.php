@@ -9,8 +9,9 @@
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: content-checklist
 */
+$is_localhost = $_SERVER['HTTP_HOST'] === 'localhost';
 
-$action_root = $_SERVER['HTTP_HOST'] === 'localhost' ? 'wp_ajax_nopriv' : 'wp_ajax';
+$action_root = $is_localhost ? 'wp_ajax_nopriv' : 'wp_ajax';
 
 function render_page()
 {
@@ -19,6 +20,8 @@ function render_page()
 
 function init_client()
 {
+    global $is_localhost;
+    
     $all_posts = new WP_Query([
         'post_type'=>'post',
         'orderby'=>'post_title',
@@ -37,7 +40,12 @@ function init_client()
         $post_for_client = [
             'title'=>$post->post_title,
             'ID'=>$post->ID,
-            'columns'=>$post_columns ? $post_columns : array()
+            'columns'=>$post_columns ? $post_columns : array(),
+            'urls'=>[
+                'view'=>get_permalink( $post ),
+                'edit'=>$is_localhost ? 'http://localhost/raymondsfood/wp-admin/post.php?post=' . $post->ID . '&action=edit' 
+                : get_edit_post_link( $post )
+            ]
         ];
 
         $posts_for_client[] = $post_for_client;

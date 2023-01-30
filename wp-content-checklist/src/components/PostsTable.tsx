@@ -37,8 +37,14 @@ const Table = styled.table`
     }
   }
 
-  tbody tr:nth-of-type(odd) * {
-    background: #eaeaea;
+  tbody tr {
+    &:nth-of-type(odd) > td {
+      background: #dedede;
+    }
+
+    :hover td {
+      background: #bbb;
+    }
   }
 
   .col--title {
@@ -50,16 +56,24 @@ const Table = styled.table`
   }
 `;
 
+const TitleCell = styled.div`
+  display: flex;
+  justify-content: space-between;
+  a {
+    color: #000;
+  }
+`;
+
 const ColumnCell = styled.td`
   color: #fff;
   background: ${(props) => {
     switch (props.value) {
       case -1:
-        return "black !important;";
+        return "rgb(0 0 0 / 75%) !important;";
       case 0:
-        return "#900 !important;";
+        return "rgb(153 0 0 / 75%) !important;";
       case 1:
-        return "#090 !important;";
+        return "rgb(0 153 0 / 75%) !important;";
     }
   }};
 `;
@@ -181,7 +195,12 @@ const PostsTable = ({}) => {
             return (
               <tr key={post.ID}>
                 <th className="col--id">{post.ID}</th>
-                <th className="col--title">{post.title}</th>
+                <td className="col--title">
+                  <TitleCell>
+                    <a href={post.urls.edit}>{post.title}</a>
+                    <a href={post.urls.view}>(view)</a>
+                  </TitleCell>
+                </td>
                 {columns.map((column, i) => {
                   return (
                     <ColumnCell

@@ -6,7 +6,7 @@ import Modal, { ModalHint } from "./Modal";
 export const CopyFunctionModal = ({functionName,onClose}) => {
     return (
         <Modal title={`${functionName} Does Not Exist`} onClose={onClose}>
-            <textarea readOnly="readonly" css={css`
+            <textarea css={css`
                 width: 100%;
                 height: 18em;
                 font-family: Courier New;
@@ -16,18 +16,31 @@ export const CopyFunctionModal = ({functionName,onClose}) => {
                 border-radius: 4px;
             `} value={
 `function ${functionName} ($slug){
-    /**
-     * check or fix logic heregit 
-     * 
-     * check functions return
-     *  - null (Unknown)
-     *  - -1 (N/A)
-     *  - 0 (No)
-     *  - 1 (Yes)
-     * 
-     * fix functions return true or false
-     * 
-     */
+    
+    //get all posts you want to check
+    $query = new WP_Query([
+        'post_type'=>'post',
+        'posts_per_page'=>-1
+    ]);
+    
+    foreach($query->posts as $post)
+    {
+        /**
+         * Put logic here that checks whether each post is unknown,N/A,no,yes
+         * null = unknown
+         * -1   = N/A
+         * 0    = No
+         * 1    = Yes
+         */
+        $result = null;
+
+        //set that value for the post and column
+        wpcc_set_column(
+            $slug,
+            $post->ID,
+            $result
+        );
+    }
 }`
             }></textarea>
             <ModalHint>Function does not exist, add the above code to your theme's functions.php</ModalHint>

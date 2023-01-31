@@ -1,9 +1,10 @@
-import { useStore } from '../store';
 import {css} from '@emotion/css'
 import { useEffect, useState } from 'react';
 import PostsTable from './PostsTable';
 import CreateColumnModal from './modals/CreateColumnModal';
 import { useCallback } from 'react';
+import { GlobalStyles } from './common/GlobalStyles';
+
 
 export const MainBody = () => {
 
@@ -14,7 +15,9 @@ export const MainBody = () => {
     const onCloseCreateColumnClick = useCallback(()=>{
         setShowCreateColumn(false)
     })
-    return <div className={css`
+    return <>
+        <GlobalStyles />
+    <div className={css`
         background: white;
         width: 100vw;
         height: 100vh;
@@ -25,4 +28,5 @@ export const MainBody = () => {
         <PostsTable />
         {showCreateColumn && <CreateColumnModal onClose={onCloseCreateColumnClick} />}
     </div>
+    </>
   }

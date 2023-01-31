@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import { useStore } from "../store";
 import styled from "@emotion/styled";
 import deleteIcon from "../assets/icons/delete.svg";
@@ -23,6 +23,7 @@ const Table = styled.table`
     position: sticky;
     top: 0; /* Don't forget this, required for the stickiness */
     background: white;
+    z-index: 3;
   }
 
   tr {
@@ -48,6 +49,11 @@ const Table = styled.table`
     :hover td {
       background: #bbb;
     }
+  }
+
+  thead tr th,
+  thead tr td {
+    background: white;
   }
 
   .col--title {
@@ -76,8 +82,8 @@ const TitleCell = styled.div`
 `;
 
 const ColumnCell = styled.td`
-  color: #fff;
   background: ${(props) => {
+    // @ts-ignore
     switch (props.value) {
       case -1:
         return "rgb(0 0 0 / 75%) !important;";
@@ -127,7 +133,17 @@ const PostsTable = ({}) => {
   const [shouldShowCodeModal, setShouldShowCodeModal] = useState(false);
   const [functiontoCopy, setFunctionToCopy] = useState(null);
 
-  const [postNameLeft, setPostNameLeft] = useState("6ch");
+  const [postNameLeft, setPostNameLeft] = useState("3.9375em");
+
+  const firstIDCell = useRef<HTMLTableCellElement>(null);
+
+  useLayoutEffect(() => {
+    setTimeout(() => {
+      if (firstIDCell?.current) {
+        setPostNameLeft(`${firstIDCell.current.offsetWidth}px`);
+      }
+    }, 1000);
+  }, [firstIDCell]);
 
   const showDeleteModal = (column) => {
     setColumnToDelete(column);
@@ -152,8 +168,8 @@ const PostsTable = ({}) => {
       <Table>
         <thead>
           <ControlRow>
-            <td className="col--id"></td>
-            <td className="col--title"></td>
+            <td className="col--id" ref={firstIDCell}></td>
+            <td className="col--title" style={{ left: postNameLeft }}></td>
             {columns.map((column, i) => {
               return (
                 <ControlCell key={`column-header--control${i}`}>

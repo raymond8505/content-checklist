@@ -21,7 +21,7 @@ const Table = styled.table`
 
   thead {
     position: sticky;
-    top: 0; /* Don't forget this, required for the stickiness */
+    top: 0;
     background: white;
     z-index: 3;
   }

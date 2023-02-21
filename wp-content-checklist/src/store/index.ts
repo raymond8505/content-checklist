@@ -14,7 +14,6 @@ export interface Column {
   name: string;
   slug: string;
 }
-
 export interface Store {
   posts: Post[];
   setPosts: (newPosts: Post[]) => Post[];

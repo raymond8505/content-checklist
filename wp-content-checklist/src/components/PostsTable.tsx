@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { useStore, Post, Store, Column } from "../store";
 import styled from "@emotion/styled";
 import deleteIcon from "../assets/icons/delete.svg";
@@ -82,22 +82,23 @@ const TitleCell = styled.div`
 `;
 
 const ColumnCell = styled.td`
-  background: ${(props) => {
+  ${(props) => {
     // @ts-ignore
     switch (props.value) {
       case -1:
-        return "rgb(0 0 0 / 75%) !important;";
+        return "background: rgb(0 0 0 / 75%) !important; color: white;";
       case 0:
-        return "rgb(153 0 0 / 75%) !important;";
+        return "background: rgb(153 0 0 / 75%) !important;";
       case 1:
-        return "rgb(0 153 0 / 75%) !important;";
+        return "background: rgb(0 153 0 / 75%) !important;";
+      default:
+        return "background: white;";
     }
   }};
 `;
 
 const PostsTable = ({}) => {
-  const { posts, columns }: { posts: Post[]; columns: Column[] } =
-    useStore() as any as Store; //todo do this the right way
+  const { posts, columns, setPosts } = useStore() as any as Store; //todo do this the right way
 
   const updateFromServer = useServerUpdate();
 
@@ -171,20 +172,30 @@ const PostsTable = ({}) => {
   const nextVal = (curVal: number): number => {
     if (curVal === 1) return -1;
 
-    return curVal++;
+    return ++curVal;
   };
 
   const nextColumnVal = (column: Column, post: Post) =>
     nextVal(getColumnVal(column, post));
 
-  const handleCellClick = (column: Column, post: Post) => {
-    console.log({ column, post });
+  const handleCellClick = useCallback(
+    (column: Column, post: Post) => {
+      console.log({ column, post });
 
-    const newVal = nextColumnVal(column, post);
-    post.columns[column.slug] = newVal;
+      const newVal = nextColumnVal(column, post);
+      const newPost = { ...post };
+      newPost.columns[column.slug] = newVal;
 
-    updatePost(post);
-  };
+      updatePost(newPost);
+
+      const newPosts = [...posts];
+      const postIndex = newPosts.findIndex((post) => post.ID === newPost.ID);
+      newPosts[postIndex] = newPost;
+
+      setPosts(newPosts);
+    },
+    [setPosts, posts]
+  );
   return (
     <>
       <Table>

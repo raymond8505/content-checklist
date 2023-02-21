@@ -60,7 +60,7 @@ body,html
 {
     background-color: white;
     font-family: Roboto, Arial, _sans;
-    font-size: 16px;
+    font-size: 14px;
 }
 
 th

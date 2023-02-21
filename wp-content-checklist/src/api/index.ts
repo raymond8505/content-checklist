@@ -81,12 +81,12 @@ export const fixColumn = async (slug) => {
 };
 
 export const updatePost = async (post: Post) => {
+  const form = new FormData();
+  form.append("post", JSON.stringify(post));
+
   const resp = await apiFetch("update_post", {
     method: "POST",
-    body: JSON.stringify(post),
-    headers: {
-      "Content-Type": "text/json",
-    },
+    body: form,
   });
 
   return handleApiResponse(resp);

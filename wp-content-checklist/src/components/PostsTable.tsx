@@ -180,13 +180,13 @@ const PostsTable = ({}) => {
 
   const handleCellClick = useCallback(
     (column: Column, post: Post) => {
-      console.log({ column, post });
-
       const newVal = nextColumnVal(column, post);
       const newPost = { ...post };
       newPost.columns[column.slug] = newVal;
 
-      updatePost(newPost);
+      updatePost(newPost).catch((e) => {
+        alert(e.error);
+      });
 
       const newPosts = [...posts];
       const postIndex = newPosts.findIndex((post) => post.ID === newPost.ID);

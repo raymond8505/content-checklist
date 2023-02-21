@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
-import { useStore } from "../store";
+import { useStore, Post, Store, Column } from "../store";
 import styled from "@emotion/styled";
 import deleteIcon from "../assets/icons/delete.svg";
 import fixIcon from "../assets/icons/fix.svg";
@@ -7,7 +7,7 @@ import checkIcon from "../assets/icons/check.svg";
 import { Icon } from "./common/Icon";
 import IconButton from "./common/IconButton";
 import { DeleteColumnModal } from "./modals/DeleteColumnModal";
-import { checkColumn, fixColumn, useServerUpdate } from "../api";
+import { checkColumn, fixColumn, updatePost, useServerUpdate } from "../api";
 import { CopyFunctionModal } from "./modals/CopyFunctionModal";
 
 const Table = styled.table`
@@ -96,7 +96,9 @@ const ColumnCell = styled.td`
 `;
 
 const PostsTable = ({}) => {
-  const { posts, columns } = useStore();
+  const { posts, columns }: { posts: Post[]; columns: Column[] } =
+    useStore() as any as Store; //todo do this the right way
+
   const updateFromServer = useServerUpdate();
 
   const columnVal = (post, column) => {
@@ -163,6 +165,26 @@ const PostsTable = ({}) => {
     setShouldShowCodeModal(true);
   };
 
+  const getColumnVal = (column: Column, post: Post) =>
+    post.columns[column.slug];
+
+  const nextVal = (curVal: number): number => {
+    if (curVal === 1) return -1;
+
+    return curVal++;
+  };
+
+  const nextColumnVal = (column: Column, post: Post) =>
+    nextVal(getColumnVal(column, post));
+
+  const handleCellClick = (column: Column, post: Post) => {
+    console.log({ column, post });
+
+    const newVal = nextColumnVal(column, post);
+    post.columns[column.slug] = newVal;
+
+    updatePost(post);
+  };
   return (
     <>
       <Table>
@@ -238,6 +260,9 @@ const PostsTable = ({}) => {
                     <ColumnCell
                       key={`post-column-${i}`}
                       value={post.columns[column.slug]}
+                      onClick={() => {
+                        handleCellClick(column, post);
+                      }}
                     >
                       {columnVal(post, column)}
                     </ColumnCell>

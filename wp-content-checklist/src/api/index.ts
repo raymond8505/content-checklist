@@ -1,4 +1,4 @@
-import { useStore } from "../store";
+import { Post, useStore } from "../store";
 
 export const apiHost =
   typeof ajaxurl === "undefined"
@@ -75,6 +75,18 @@ export const fixColumn = async (slug) => {
   const resp = await apiFetch("fix_column", {
     method: "POST",
     body: form,
+  });
+
+  return handleApiResponse(resp);
+};
+
+export const updatePost = async (post: Post) => {
+  const resp = await apiFetch("update_post", {
+    method: "POST",
+    body: JSON.stringify(post),
+    headers: {
+      "Content-Type": "text/json",
+    },
   });
 
   return handleApiResponse(resp);

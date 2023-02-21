@@ -11,6 +11,7 @@ const Dialog = styled.dialog`
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 100;
 `
 
 const DialogBody = styled.div`

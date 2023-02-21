@@ -1,9 +1,10 @@
-import { Post, useStore } from "../store";
+import { Post, Store, useStore } from "../store";
+
+const appHostParams = new URLSearchParams(location.search);
+const ajaxurl = appHostParams.get("ajaxurl");
 
 export const apiHost =
-  typeof ajaxurl === "undefined"
-    ? "http://localhost/raymondsfood/wp-admin/admin-ajax.php"
-    : ajaxurl;
+  ajaxurl || "http://localhost/raymondsfood/wp-admin/admin-ajax.php";
 
 export const apiFetch = (action, opts = {}) => {
   return fetch(`${apiHost}?action=wpcc_${action}`, opts);
@@ -13,7 +14,7 @@ export const apiFetch = (action, opts = {}) => {
  * @param {Function} cb
  */
 export const useServerUpdate = (cb = () => {}) => {
-  const { setPosts, setColumns } = useStore();
+  const { setPosts, setColumns } = useStore() as any as Store;
 
   return () => {
     apiFetch("init").then((resp) => {

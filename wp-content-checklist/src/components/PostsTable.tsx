@@ -13,7 +13,7 @@ import { CopyFunctionModal } from "./modals/CopyFunctionModal";
 const Table = styled.table`
   text-align: left;
   color: black;
-  width: 100%;
+  width: calc(100% - 1em);
   height: 100vh;
   border-spacing: 0;
   padding: 0;
@@ -146,7 +146,7 @@ const PostsTable = ({}) => {
         setPostNameLeft(`${firstIDCell.current.offsetWidth}px`);
       }
     }, 1000);
-  }, [firstIDCell]);
+  }, [firstIDCell, columns, posts]);
 
   const showDeleteModal = (column) => {
     setColumnToDelete(column);

@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "yarn vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "yarn build && cd ../../../themes/raymondsfood && yarn deploy"
   },
   "dependencies": {
     "@emotion/babel-plugin": "^11.10.5",

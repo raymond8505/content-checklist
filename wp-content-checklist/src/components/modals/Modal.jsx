@@ -59,10 +59,10 @@ const Modal = ({title,children,onClose = ()=>{}}) => {
 
 export const ModalHint = styled.div`
     font-size: .8em;
-    border: 1px solid #cb9d6f;
-    color: #cb9d6f;
+    border: 1px solid #976d42;
+    color: #976d42;
     padding: .4em 1em;
-    background: rgba(203 157 111 / 10%);
+    background: rgba(203 157 111 / 20%);
     border-radius: 2px;
 `
 

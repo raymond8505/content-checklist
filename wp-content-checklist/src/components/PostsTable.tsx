@@ -21,7 +21,7 @@ const Table = styled.table`
 
   thead {
     position: sticky;
-    top: 0;
+    top: 2em;
     background: white;
     z-index: 3;
   }
@@ -29,20 +29,20 @@ const Table = styled.table`
   tr {
     > td,
     > th {
-      border-bottom: 1px solid #ddd;
-      padding: 0.2em 0.5em;
+      border-bottom: 1px solid #cbcbcb;
+      padding: 0.5em 0.8em;
 
       &:not(:last-child) {
-        border-right: 1px solid #ddd;
+        border-right: 1px solid #cbcbcb;
       }
     }
   }
 
   tbody tr {
-    &:nth-of-type(odd) > td {
+    &:nth-of-type(odd) > * {
       background: #dedede;
     }
-    &:nth-of-type(even) > td {
+    &:nth-of-type(even) > * {
       background: #fff;
     }
 
@@ -86,11 +86,11 @@ const ColumnCell = styled.td`
     // @ts-ignore
     switch (props.value) {
       case -1:
-        return "background: rgb(0 0 0 / 75%) !important; color: white;";
+        return "background: rgb(0 0 0 / 20%) !important; color:;";
       case 0:
-        return "background: rgb(153 0 0 / 75%) !important;";
+        return "background: rgb(153 0 0 / 20%) !important;";
       case 1:
-        return "background: rgb(0 153 0 / 75%) !important;";
+        return "background: rgb(0 153 0 / 20%) !important;";
       default:
         return "background: white;";
     }

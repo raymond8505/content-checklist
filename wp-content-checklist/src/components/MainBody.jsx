@@ -10,7 +10,7 @@ const Header = styled.header`
     width: 100%;
     height: 2em;
     background: white;
-    position: sticky;
+    position: fixed;
     top: 0;
     z-index: 9;
 `

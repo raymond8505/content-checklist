@@ -18,6 +18,7 @@ const Table = styled.table`
   border-spacing: 0;
   padding: 0;
   margin: 0;
+  padding-top: 2em;
 
   thead {
     position: sticky;
@@ -29,13 +30,17 @@ const Table = styled.table`
   tr {
     > td,
     > th {
-      border-bottom: 1px solid #cbcbcb;
+      //border-bottom: 1px solid #cbcbcb;
       padding: 0.5em 0.8em;
 
       &:not(:last-child) {
         border-right: 1px solid #cbcbcb;
       }
     }
+  }
+
+  tbody tr > * {
+    transform: translateY(2em);
   }
 
   tbody tr {
@@ -46,8 +51,20 @@ const Table = styled.table`
       background: #fff;
     }
 
-    :hover td {
+    &:hover > * {
       background: #bbb;
+    }
+
+    &:hover {
+      .column-cell--na {
+        background: rgb(0 0 0 / 30%) !important;
+      }
+      .column-cell--no {
+        background: rgb(153 0 0 / 30%) !important;
+      }
+      .column-cell--yes {
+        background: rgb(0 153 0 / 30%) !important;
+      }
     }
   }
 
@@ -196,6 +213,19 @@ const PostsTable = ({}) => {
     },
     [setPosts, posts]
   );
+
+  const valueToClassName = (val) => {
+    const prefix = "column-cell--";
+
+    switch (val) {
+      case -1:
+        return `${prefix}na`;
+      case 0:
+        return `${prefix}no`;
+      case 1:
+        return `${prefix}yes`;
+    }
+  };
   return (
     <>
       <Table>
@@ -271,6 +301,7 @@ const PostsTable = ({}) => {
                     <ColumnCell
                       key={`post-column-${i}`}
                       value={post.columns[column.slug]}
+                      className={valueToClassName(post.columns[column.slug])}
                       onClick={() => {
                         handleCellClick(column, post);
                       }}

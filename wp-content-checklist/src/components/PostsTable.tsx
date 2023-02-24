@@ -1,4 +1,10 @@
-import React, { useCallback, useLayoutEffect, useRef, useState } from "react";
+import React, {
+  SyntheticEvent,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { useStore, Post, Store, Column } from "../store";
 import styled from "@emotion/styled";
 import deleteIcon from "../assets/icons/delete.svg";
@@ -9,128 +15,126 @@ import IconButton from "./common/IconButton";
 import { DeleteColumnModal } from "./modals/DeleteColumnModal";
 import { checkColumn, fixColumn, updatePost, useServerUpdate } from "../api";
 import { CopyFunctionModal } from "./modals/CopyFunctionModal";
+import { Table, TitleCell } from "./PostsTable.styles";
 
-const Table = styled.table`
-  text-align: left;
-  color: black;
-  width: calc(100% - 1em);
-  height: 100vh;
-  border-spacing: 0;
-  padding: 0;
-  margin: 0;
-  padding-top: 2em;
-
-  thead {
-    position: sticky;
-    top: 2em;
-    background: white;
-    z-index: 3;
+const columnVal = (post, column) => {
+  switch (post.columns[column.slug]) {
+    case -1:
+      return "N/A";
+    case 0:
+      return "No";
+    case 1:
+      return "Yes";
+    default:
+      return "";
   }
+};
 
-  tr {
-    > td,
-    > th {
-      //border-bottom: 1px solid #cbcbcb;
-      padding: 0.5em 0.8em;
+const valueToClassName = (val) => {
+  const prefix = "column-cell--";
 
-      &:not(:last-child) {
-        border-right: 1px solid #cbcbcb;
+  switch (val) {
+    case -1:
+      return `${prefix}na`;
+    case 0:
+      return `${prefix}no`;
+    case 1:
+      return `${prefix}yes`;
+  }
+};
+
+const getColumnVal = (column: Column, post: Post) => post.columns[column.slug];
+
+const nextVal = (curVal: number): number => {
+  if (curVal === 1) return -1;
+
+  return ++curVal;
+};
+
+const nextColumnVal = (column: Column, post: Post) =>
+  nextVal(getColumnVal(column, post));
+
+interface CCProps {
+  post: Post;
+  column: Column;
+  onChange: (
+    column: Column,
+    post: Post,
+    newVal: number | undefined,
+    cb: () => void
+  ) => void;
+  children?: any;
+}
+const ColumnCell = ({ post, column, onChange }: CCProps) => {
+  const [showSelect, setShowSelect] = useState(false);
+  const ColumnCellTD = styled.td<{ value: number | undefined }>`
+    position: relative;
+    ${(props) => {
+      // @ts-ignore
+      switch (props.value) {
+        case -1:
+          return "background: rgb(0 0 0 / 20%) !important; color:;";
+        case 0:
+          return "background: rgb(153 0 0 / 20%) !important;";
+        case 1:
+          return "background: rgb(0 153 0 / 20%) !important;";
+        default:
+          return "background: white;";
       }
-    }
-  }
+    }};
+  `;
 
-  tbody tr > * {
-    transform: translateY(2em);
-  }
+  const Select = ({ defaultValue }) => {
+    const InnerSelect = styled.select`
+      width: 100%;
+      background: none;
+      border: none;
+      padding: none;
+    `;
 
-  tbody tr {
-    &:nth-of-type(odd) > * {
-      background: #dedede;
-    }
-    &:nth-of-type(even) > * {
-      background: #fff;
-    }
+    return (
+      <InnerSelect
+        value={defaultValue}
+        onChange={(e) => {
+          const rawVal = e.currentTarget.value;
+          const val = Number(rawVal) === -2 ? undefined : Number(rawVal);
 
-    &:hover > * {
-      background: #bbb;
-    }
+          onChange(column, post, val, () => {
+            setShowSelect(false);
+          });
+        }}
+      >
+        <option value={-2}>None</option>
+        <option value={-1}>N/A</option>
+        <option value={0}>No</option>
+        <option value={1}>Yes</option>
+      </InnerSelect>
+    );
+  };
 
-    &:hover {
-      .column-cell--na {
-        background: rgb(0 0 0 / 30%) !important;
-      }
-      .column-cell--no {
-        background: rgb(153 0 0 / 30%) !important;
-      }
-      .column-cell--yes {
-        background: rgb(0 153 0 / 30%) !important;
-      }
-    }
-  }
-
-  thead tr th,
-  thead tr td {
-    background: white;
-  }
-
-  .col--title {
-    width: 20%;
-    left: 6ch;
-  }
-
-  .col--id {
-    width: 6ch;
-    left: 0;
-  }
-
-  .col--title,
-  .col--id {
-    position: sticky;
-    z-index: 2;
-  }
-`;
-
-const TitleCell = styled.div`
-  display: flex;
-  justify-content: space-between;
-  a {
-    color: #000;
-  }
-`;
-
-const ColumnCell = styled.td`
-  ${(props) => {
-    // @ts-ignore
-    switch (props.value) {
-      case -1:
-        return "background: rgb(0 0 0 / 20%) !important; color:;";
-      case 0:
-        return "background: rgb(153 0 0 / 20%) !important;";
-      case 1:
-        return "background: rgb(0 153 0 / 20%) !important;";
-      default:
-        return "background: white;";
-    }
-  }};
-`;
+  return (
+    <ColumnCellTD
+      value={post.columns[column.slug]}
+      className={valueToClassName(post.columns[column.slug])}
+      onClick={() => {
+        if (!showSelect) {
+          setShowSelect(true);
+        }
+      }}
+    >
+      {showSelect ? (
+        <Select defaultValue={post.columns[column.slug]}></Select>
+      ) : (
+        columnVal(post, column)
+      )}
+    </ColumnCellTD>
+  );
+};
 
 const PostsTable = ({}) => {
   const { posts, columns, setPosts } = useStore() as any as Store; //todo do this the right way
 
   const updateFromServer = useServerUpdate();
-
-  const columnVal = (post, column) => {
-    switch (post.columns[column.slug]) {
-      case -1:
-        return "N/A";
-      case 0:
-        return "No";
-      case 1:
-        return "Yes";
-      default:
-        return "";
-    }
-  };
 
   const ControlRow = styled.tr`
     &,
@@ -183,49 +187,34 @@ const PostsTable = ({}) => {
     setShouldShowCodeModal(true);
   };
 
-  const getColumnVal = (column: Column, post: Post) =>
-    post.columns[column.slug];
-
-  const nextVal = (curVal: number): number => {
-    if (curVal === 1) return -1;
-
-    return ++curVal;
-  };
-
-  const nextColumnVal = (column: Column, post: Post) =>
-    nextVal(getColumnVal(column, post));
-
-  const handleCellClick = useCallback(
-    (column: Column, post: Post) => {
-      const newVal = nextColumnVal(column, post);
+  const handleCellChange = useCallback(
+    (column: Column, post: Post, newVal: number | undefined, cb: () => {}) => {
       const newPost = { ...post };
-      newPost.columns[column.slug] = newVal;
 
-      updatePost(newPost).catch((e) => {
-        alert(e.error);
-      });
+      if (newVal !== undefined) {
+        newPost.columns[column.slug] = newVal;
+      } else {
+        delete newPost.columns[column.slug];
+      }
 
-      const newPosts = [...posts];
-      const postIndex = newPosts.findIndex((post) => post.ID === newPost.ID);
-      newPosts[postIndex] = newPost;
+      updatePost(newPost)
+        .catch((e) => {
+          alert(e.error);
+        })
+        .then(() => {
+          const newPosts = [...posts];
+          const postIndex = newPosts.findIndex(
+            (post) => post.ID === newPost.ID
+          );
+          newPosts[postIndex] = newPost;
 
-      setPosts(newPosts);
+          setPosts(newPosts);
+          cb();
+        });
     },
     [setPosts, posts]
   );
 
-  const valueToClassName = (val) => {
-    const prefix = "column-cell--";
-
-    switch (val) {
-      case -1:
-        return `${prefix}na`;
-      case 0:
-        return `${prefix}no`;
-      case 1:
-        return `${prefix}yes`;
-    }
-  };
   return (
     <>
       <Table>
@@ -300,11 +289,9 @@ const PostsTable = ({}) => {
                   return (
                     <ColumnCell
                       key={`post-column-${i}`}
-                      value={post.columns[column.slug]}
-                      className={valueToClassName(post.columns[column.slug])}
-                      onClick={() => {
-                        handleCellClick(column, post);
-                      }}
+                      post={post}
+                      column={column}
+                      onChange={handleCellChange}
                     >
                       {columnVal(post, column)}
                     </ColumnCell>

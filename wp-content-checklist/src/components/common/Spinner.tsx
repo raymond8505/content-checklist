@@ -15,7 +15,7 @@ const Wrapper = styled.div`
 `;
 
 const Img = styled.img`
-  height: 80%;
+  height: 50%;
   width: auto;
   animation: spin 1.5s infinite linear;
 `;

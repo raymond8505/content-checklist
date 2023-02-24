@@ -188,7 +188,12 @@ const PostsTable = ({}) => {
   };
 
   const handleCellChange = useCallback(
-    (column: Column, post: Post, newVal: number | undefined, cb: () => {}) => {
+    (
+      column: Column,
+      post: Post,
+      newVal: number | undefined,
+      cb: () => void
+    ) => {
       const newPost = { ...post };
 
       if (newVal !== undefined) {

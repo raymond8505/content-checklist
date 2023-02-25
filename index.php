@@ -9,19 +9,26 @@
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: content-checklist
 */
-$is_localhost = $_SERVER['HTTP_HOST'] === 'localhost';
+$is_localhost = isset($_SERVER['HTTP_ORIGIN']) && $_SERVER['HTTP_ORIGIN'] === 'http://127.0.0.1:5173';
 
 $action_root = $is_localhost ? 'wp_ajax_nopriv' : 'wp_ajax';
 
+$current_page = admin_url( "admin.php?page=".$_GET["page"] );
+
 function render_page()
 {
-    echo 'test';
+    $app_url = plugin_dir_url('/content-checklist/wp-content-checklist/dist/index.html');
+
+    $app_url .= '?ajaxurl=' . admin_url( 'admin-ajax.php' );
+
+    echo '<iframe style="width: 100%; height: calc(100vh - 4em)" src="'. $app_url . '"></iframe>';
+
 }
 
 function init_client()
 {
     global $is_localhost;
-    
+    //new dBug($_SERVER);
     $all_posts = new WP_Query([
         'post_type'=>'post',
         'orderby'=>'post_title',
@@ -64,9 +71,58 @@ function update_columns($columns)
 {
     return update_option('wpcc_columns',$columns);
 }
+function init_playground()
+{
+    global $current_page;
+
+    $columns = get_columns();
+
+    //new dBug($columns);
+
+    echo '<script src="' . plugin_dir_url('/content-checklist/playground/playground.js') . 'playground.js"></script>';
+
+    echo '<h3>';
+    foreach($columns as $i=>$column)
+    {
+        $slug = $column['slug'];
+        $name = $column['name'];
+        
+        $check_func = slug_to_function($slug,'check');
+        $fix_func = slug_to_function($slug,'fix');
+
+        if(function_exists($check_func))
+        {
+            echo '<a href="' . $current_page . '&func=check&slug=' . $slug . '">Check ' . $name . '</a> | ';
+        }
+
+        if(function_exists($fix_func))
+        {
+            echo '<a href="' . $current_page . '&func=fix&slug=' . $slug . '">Fix ' . $name . '</a> | ';
+        }
+    }
+    echo '</h3>';
+
+    $func = $_REQUEST['func'];
+    $slug = $_REQUEST['slug'];
+    $php_func = slug_to_function($slug,$func);
+
+    if(isset($func) && isset($slug) && function_exists($php_func))
+    {
+        echo '<h2>' . $func . ' ' . $name . '</h2><hr />';
+        echo '<div id="viewer">';
+        
+            echo call_user_func($php_func,$slug);
+
+        echo '</div>';
+    }
+
+    echo '<hr /><h2>End Of Output</h2>';
+}
 function init()
 {
     add_menu_page('Content Checklist','Content Checklist','edit_posts','content-checklist','render_page','dashicons-saved');
+    
+    add_submenu_page('content-checklist','Automation Playground','Playground','edit_posts','content-checklist__playground','init_playground');
     
     $columns = get_columns();
 
@@ -152,15 +208,18 @@ function delete_column()
 }
 
 function check_posts($func,$slug)
-{+
+{
     call_user_func($func,$slug);
 }
-
+function slug_to_function($slug,$func_type)
+{
+    return 'wpcc_' . $func_type . '_' . str_replace('-','_',$slug);
+}
 function check_column()
 {
     $slug = $_POST['slug'];
 
-    $func = 'wpcc_check_' . str_replace('-','_',$slug);
+    $func = slug_to_function($slug,'check');
 
     if(function_exists($func))
     {
@@ -180,7 +239,7 @@ function fix_column()
 {
     $slug = $_POST['slug'];
 
-    $func = 'wpcc_fix_' . str_replace('-','_',$slug);
+    $func = slug_to_function($slug,'fix');
 
     if(function_exists($func))
     {
@@ -195,25 +254,49 @@ function fix_column()
     die();
 }
 
-function wpcc_set_column($slug,$id,$val)
+/**
+ * $slug column slug
+ * $post_id
+ * $val
+ * [$overwrite_if] default null only overwrite the column value if its current value is in the array
+ */
+function wpcc_set_column($slug,$post_id,$val,$overwrite_if = null)
 {
-    $has_meta = metadata_exists('post',$id,'wpcc_columns');
-    $columns = $has_meta ? get_post_meta( $id, 'wpcc_columns', true ) : [];
+    $has_meta = metadata_exists('post',$post_id,'wpcc_columns');
+    $columns = $has_meta ? get_post_meta( $post_id, 'wpcc_columns', true ) : [];
 
-    $columns[$slug] = $val;
+    if($overwrite_if === null || array_search($columns[$slug],$overwrite_if) !== FALSE)
+    {
+        $columns[$slug] = $val;
+    }
 
     if($has_meta)
     {
-        update_post_meta( $id,'wpcc_columns' , $columns );
+        
+        update_post_meta( $post_id,'wpcc_columns' , $columns );
     }
     else
     {
-        add_post_meta( $id,'wpcc_columns' , $columns );
+        add_post_meta( $post_id,'wpcc_columns' , $columns );
     }
 }
+
+function update_post()
+{
+    $post = json_decode(str_replace('\\"','"',$_REQUEST['post']));
+
+    foreach($post->columns as $column=>$val)
+    {
+        wpcc_set_column($column,$post->ID,$val);
+    }
+    
+    die('{"success":"success"}');
+}
+
 add_action('admin_menu','init');
 add_action($action_root . '_wpcc_init','init_client');
 add_action($action_root . '_wpcc_create_column','create_column');
 add_action($action_root . '_wpcc_delete_column','delete_column');
 add_action($action_root . '_wpcc_check_column','check_column');
 add_action($action_root . '_wpcc_fix_column','fix_column');
+add_action($action_root . '_wpcc_update_post','update_post');

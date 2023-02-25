@@ -1,6 +1,7 @@
 import React, {
   SyntheticEvent,
   useCallback,
+  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -49,6 +50,14 @@ const PostsTable = ({}) => {
 
   const firstIDCell = useRef<HTMLTableCellElement>(null);
 
+  const currentCell = useRef<{
+    post: Post | null;
+    column: Column | null;
+  }>({
+    post: null,
+    column: null,
+  });
+
   useLayoutEffect(() => {
     setTimeout(() => {
       if (firstIDCell?.current) {
@@ -75,6 +84,24 @@ const PostsTable = ({}) => {
     setShouldShowCodeModal(true);
   };
 
+  const updateCell = (
+    post: Post | null,
+    column: Column,
+    newVal: number | undefined = undefined
+  ): Post | null => {
+    if (!post) return null;
+
+    const newPost = { ...post };
+
+    if (newVal !== undefined) {
+      newPost.columns[column.slug] = newVal;
+    } else {
+      delete newPost.columns[column.slug];
+    }
+
+    return newPost;
+  };
+
   const handleCellChange = useCallback(
     (
       column: Column,
@@ -82,13 +109,9 @@ const PostsTable = ({}) => {
       newVal: number | undefined,
       cb: () => void
     ) => {
-      const newPost = { ...post };
+      const newPost = updateCell(post, column, newVal);
 
-      if (newVal !== undefined) {
-        newPost.columns[column.slug] = newVal;
-      } else {
-        delete newPost.columns[column.slug];
-      }
+      if (!newPost) return;
 
       updatePost(newPost)
         .catch((e) => {
@@ -107,6 +130,38 @@ const PostsTable = ({}) => {
     },
     [setPosts, posts]
   );
+
+  const handleCellHover = (post: Post, column: Column) => {
+    currentCell.current = { post, column };
+  };
+
+  useEffect(() => {
+    const onCellKeyPress = (e) => {
+      const { post, column } = currentCell.current;
+
+      console.log(e.key);
+      switch (e.key) {
+        case "y":
+          updateCell(post, column, 1);
+          break;
+        case "n":
+          updateCell(post, column, 0);
+          break;
+        case "Escape":
+          updateCell(post, column, -1);
+          break;
+        case "Backspace":
+          updateCell(post, column);
+          break;
+      }
+    };
+
+    window.addEventListener("keyup", onCellKeyPress);
+
+    return () => {
+      window.removeEventListener("keyup", onCellKeyPress);
+    };
+  }, []);
 
   return (
     <>
@@ -185,6 +240,9 @@ const PostsTable = ({}) => {
                       post={post}
                       column={column}
                       onChange={handleCellChange}
+                      onMouseOver={() => {
+                        handleCellHover(post, column);
+                      }}
                     >
                       {columnVal(post, column)}
                     </ColumnCell>

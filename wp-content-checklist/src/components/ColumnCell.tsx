@@ -3,6 +3,7 @@ import { Post, Column } from "../store";
 import React, {
   LegacyRef,
   MutableRefObject,
+  SyntheticEvent,
   useLayoutEffect,
   useRef,
   useState,
@@ -13,6 +14,7 @@ import { Spinner } from "./common/Spinner";
 interface CCProps {
   post: Post;
   column: Column;
+  onMouseOver: (e: SyntheticEvent) => void;
   onChange: (
     column: Column,
     post: Post,
@@ -22,19 +24,10 @@ interface CCProps {
   children?: any;
 }
 export const ColumnCell = React.forwardRef(
-  ({ post, column, onChange }: CCProps, ref) => {
+  ({ post, column, onChange, onMouseOver }: CCProps, ref) => {
     const [showSelect, setShowSelect] = useState(false);
     const [showSpinner, setShowSpinner] = useState(false);
-    const selectRef = useRef<HTMLSelectElement | null>(null);
 
-    useLayoutEffect(() => {
-      if (selectRef.current) {
-        setTimeout(() => {
-          selectRef.current?.click();
-          console.log(selectRef.current);
-        }, 100);
-      }
-    }, [selectRef]);
     const ColumnCellTD = styled.td<{ value: number | undefined }>`
       position: relative;
       ${(props) => {
@@ -52,17 +45,25 @@ export const ColumnCell = React.forwardRef(
       }};
     `;
 
+    const InnerSelect = styled.select`
+      width: 100%;
+      background: none;
+      border: none;
+      padding: none;
+    `;
+
     const Select = ({ defaultValue }) => {
-      const InnerSelect = styled.select`
-        width: 100%;
-        background: none;
-        border: none;
-        padding: none;
-      `;
+      const selectRef = useRef<HTMLSelectElement | null>(null);
+
+      useLayoutEffect(() => {
+        if (selectRef.current) {
+          selectRef.current.focus();
+        }
+      }, [selectRef]);
 
       return (
         <InnerSelect
-          ref={ref as MutableRefObject<HTMLSelectElement>}
+          ref={selectRef}
           value={defaultValue}
           onChange={(e) => {
             const rawVal = e.currentTarget.value;
@@ -93,12 +94,10 @@ export const ColumnCell = React.forwardRef(
             setShowSelect(true);
           }
         }}
+        onMouseOver={onMouseOver}
       >
         {showSelect ? (
-          <Select
-            defaultValue={post.columns[column.slug]}
-            ref={selectRef}
-          ></Select>
+          <Select defaultValue={post.columns[column.slug]}></Select>
         ) : (
           columnVal(post, column)
         )}

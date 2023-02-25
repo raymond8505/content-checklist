@@ -14,7 +14,12 @@ import checkIcon from "../assets/icons/check.svg";
 import { Icon } from "./common/Icon";
 import IconButton from "./common/IconButton";
 import { DeleteColumnModal } from "./modals/DeleteColumnModal";
-import { checkColumn, fixColumn, updatePost, useServerUpdate } from "../api";
+import {
+  checkColumn,
+  fixColumn,
+  updatePostOnServer,
+  useServerUpdate,
+} from "../api";
 import { CopyFunctionModal } from "./modals/CopyFunctionModal";
 import { Table, TitleCell } from "./PostsTable.styles";
 import { ColumnCell } from "./ColumnCell";
@@ -102,6 +107,22 @@ const PostsTable = ({}) => {
     return newPost;
   };
 
+  const updatePost = (newPost, cb?: () => void) => {
+    if (!newPost) return;
+
+    updatePostOnServer(newPost)
+      .catch((e) => {
+        alert(e.error);
+      })
+      .then(() => {
+        const newPosts = [...posts];
+        const postIndex = newPosts.findIndex((post) => post.ID === newPost.ID);
+        newPosts[postIndex] = newPost;
+
+        setPosts(newPosts);
+        cb?.();
+      });
+  };
   const handleCellChange = useCallback(
     (
       column: Column,
@@ -111,22 +132,7 @@ const PostsTable = ({}) => {
     ) => {
       const newPost = updateCell(post, column, newVal);
 
-      if (!newPost) return;
-
-      updatePost(newPost)
-        .catch((e) => {
-          alert(e.error);
-        })
-        .then(() => {
-          const newPosts = [...posts];
-          const postIndex = newPosts.findIndex(
-            (post) => post.ID === newPost.ID
-          );
-          newPosts[postIndex] = newPost;
-
-          setPosts(newPosts);
-          cb();
-        });
+      updatePost(newPost, cb);
     },
     [setPosts, posts]
   );
@@ -140,18 +146,21 @@ const PostsTable = ({}) => {
       const { post, column } = currentCell.current;
 
       console.log(e.key);
+
+      if (!post || !column) return;
+
       switch (e.key) {
         case "y":
-          updateCell(post, column, 1);
+          updatePost(updateCell(post, column, 1));
           break;
         case "n":
-          updateCell(post, column, 0);
+          updatePost(updateCell(post, column, 0));
           break;
         case "Escape":
-          updateCell(post, column, -1);
+          updatePost(updateCell(post, column, -1));
           break;
         case "Backspace":
-          updateCell(post, column);
+          updatePost(updateCell(post, column));
           break;
       }
     };

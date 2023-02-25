@@ -81,7 +81,7 @@ export const fixColumn = async (slug) => {
   return handleApiResponse(resp);
 };
 
-export const updatePost = async (post: Post) => {
+export const updatePostOnServer = async (post: Post) => {
   const form = new FormData();
   form.append("post", JSON.stringify(post));
 

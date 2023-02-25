@@ -170,7 +170,7 @@ const PostsTable = ({}) => {
     return () => {
       window.removeEventListener("keyup", onCellKeyPress);
     };
-  }, []);
+  }, [posts, setPosts]);
 
   return (
     <>

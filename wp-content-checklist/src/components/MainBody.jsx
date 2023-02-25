@@ -17,6 +17,7 @@ const Header = styled.header`
 export const MainBody = () => {
 
     const [showCreateColumn,setShowCreateColumn] = useState(false)
+    console.log('main body');
     const onCreateColumnClick = useCallback(()=>{
         setShowCreateColumn(true)
     })

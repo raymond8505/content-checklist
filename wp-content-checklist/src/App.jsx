@@ -7,7 +7,7 @@ import { MainBody } from './components/MainBody';
 function App() {
 
   const updateFromServer = useServerUpdate()
-
+  
   useEffect(()=>{
     updateFromServer()
   },[]);

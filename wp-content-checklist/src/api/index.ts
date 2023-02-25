@@ -7,7 +7,7 @@ export const apiHost =
   ajaxurl || "http://localhost/raymondsfood/wp-admin/admin-ajax.php";
 
 export const apiFetch = (action, opts = {}) => {
-  return fetch(`${apiHost}?action=wpcc_${action}`, opts);
+  return fetch(`${apiHost}?action=wp_ajax_wpcc_${action}`, opts);
 };
 /**
  * updates posts and columns from the server

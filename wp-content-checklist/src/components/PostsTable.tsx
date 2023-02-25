@@ -119,7 +119,7 @@ const PostsTable = ({}) => {
         const postIndex = newPosts.findIndex((post) => post.ID === newPost.ID);
         newPosts[postIndex] = newPost;
 
-        setPosts(newPosts);
+        if (newPosts && newPosts.length === posts.length) setPosts(newPosts);
         cb?.();
       });
   };
@@ -170,7 +170,7 @@ const PostsTable = ({}) => {
     return () => {
       window.removeEventListener("keyup", onCellKeyPress);
     };
-  }, []);
+  }, [posts]);
 
   return (
     <>

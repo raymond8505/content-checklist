@@ -9,7 +9,8 @@ const Button = styled.button`
     background: none;
     cursor: pointer;
     height: 1.5em;
-
+    cursor: pointer;
+    
     img
     {
         height: 100%;

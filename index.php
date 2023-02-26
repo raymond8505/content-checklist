@@ -102,8 +102,8 @@ function init_playground()
     }
     echo '</h3>';
 
-    $func = $_REQUEST['func'];
-    $slug = $_REQUEST['slug'];
+    $func = isset($_REQUEST['func']) ? $_REQUEST['func'] : '';
+    $slug = isset($_REQUEST['slug']) ? $_REQUEST['slug'] : '';
     $php_func = slug_to_function($slug,$func);
 
     if(isset($func) && isset($slug) && function_exists($php_func))

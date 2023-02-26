@@ -109,6 +109,14 @@ const PostsTable = ({}) => {
     return newPost;
   };
 
+  const updatePostInStore = (newPost) => {
+    const newPosts = [...posts];
+    const postIndex = newPosts.findIndex((post) => post.ID === newPost.ID);
+    newPosts[postIndex] = newPost;
+
+    setPosts(newPosts);
+  };
+
   const updatePost = (newPost, cb?: () => void) => {
     if (!newPost) return;
 
@@ -117,11 +125,7 @@ const PostsTable = ({}) => {
         alert(e.error);
       })
       .then(() => {
-        const newPosts = [...posts];
-        const postIndex = newPosts.findIndex((post) => post.ID === newPost.ID);
-        newPosts[postIndex] = newPost;
-
-        setPosts(newPosts);
+        updatePostInStore(newPost);
         cb?.();
       });
   };
@@ -150,11 +154,22 @@ const PostsTable = ({}) => {
 
   const fixPostColumn = (post: Post, column: Column) => {
     fixPostColumnOnServer(post, column).then((resp) => {
-      updateCell(
-        getPostByID(resp.data.post_id),
-        getColumnBySlug(resp.data.column),
-        resp.data.val
-      );
+      if (!resp.success) return;
+
+      const { data } = resp.success;
+
+      console.log(data);
+      if (data) {
+        updatePostInStore(
+          updateCell(
+            getPostByID(data.post_id),
+            getColumnBySlug(data.column),
+            data.val
+          )
+        );
+      } else {
+        console.log(resp);
+      }
     });
   };
 

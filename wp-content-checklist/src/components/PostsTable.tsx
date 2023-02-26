@@ -158,7 +158,6 @@ const PostsTable = ({}) => {
 
       const { data } = resp.success;
 
-      console.log(data);
       if (data) {
         updatePostInStore(
           updateCell(
@@ -168,7 +167,7 @@ const PostsTable = ({}) => {
           )
         );
       } else {
-        console.log(resp);
+        console.log("data doesnt exist", resp);
       }
     });
   };

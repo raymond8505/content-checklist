@@ -305,6 +305,15 @@ function fix_post_column()
     die('{"error":"error"}');
 }
 
+function die_with_single_result($post_id,$column_slug,$val)
+{
+    die('{"success": { "data" : {
+        "post_id":' . $post_id . ',
+        "column":"' . $column_slug . '",
+        "val":'.$val . '
+    }}}');
+}
+
 add_action('admin_menu','init');
 add_action($action_root . '_wpcc_init','init_client');
 add_action($action_root . '_wpcc_create_column','create_column');

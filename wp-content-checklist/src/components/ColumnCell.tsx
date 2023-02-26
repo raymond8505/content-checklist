@@ -30,19 +30,22 @@ export const ColumnCell = React.forwardRef(
 
     const ColumnCellTD = styled.td<{ value: number | undefined }>`
       position: relative;
-      ${(props) => {
-        // @ts-ignore
-        switch (props.value) {
-          case -1:
-            return "background: rgb(0 0 0 / 20%) !important; color:;";
-          case 0:
-            return "background: rgb(153 0 0 / 20%) !important;";
-          case 1:
-            return "background: rgb(0 153 0 / 20%) !important;";
-          default:
-            return "background: white;";
-        }
-      }};
+
+      &:hover {
+        ${(props) => {
+          // @ts-ignore
+          switch (props.value) {
+            case -1:
+              return "background: rgb(0 0 0 / 50%) !important;";
+            case 0:
+              return "background: rgb(153 0 0 / 50%) !important;";
+            case 1:
+              return "background: rgb(0 153 0 / 50%) !important;";
+            default:
+              return "background: #999;";
+          }
+        }};
+      }
     `;
 
     const InnerSelect = styled.select`
@@ -95,6 +98,7 @@ export const ColumnCell = React.forwardRef(
           }
         }}
         onMouseOver={onMouseOver}
+        role="button"
       >
         {showSelect ? (
           <Select defaultValue={post.columns[column.slug]}></Select>

@@ -45,15 +45,25 @@ export const Table = styled.table`
       background: #bbb;
     }
 
-    &:hover {
-      .column-cell--na {
-        background: rgb(0 0 0 / 30%) !important;
+    td.column-cell--na {
+      background: rgb(0 0 0 / 20%);
+    }
+    td.column-cell--no {
+      background: rgb(153 0 0 / 20%);
+    }
+    td.column-cell--yes {
+      background: rgb(0 153 0 / 20%);
+    }
+
+    &:hover td {
+      &.column-cell--na {
+        background: rgb(0 0 0 / 30%);
       }
-      .column-cell--no {
-        background: rgb(153 0 0 / 30%) !important;
+      &.column-cell--no {
+        background: rgb(153 0 0 / 30%);
       }
-      .column-cell--yes {
-        background: rgb(0 153 0 / 30%) !important;
+      &.column-cell--yes {
+        background: rgb(0 153 0 / 30%);
       }
     }
   }

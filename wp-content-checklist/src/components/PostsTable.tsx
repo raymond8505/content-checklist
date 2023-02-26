@@ -278,7 +278,9 @@ const PostsTable = ({}) => {
                     >
                       {post.title}
                     </a>
-                    <a href={post.urls.view}>(view)</a>
+                    <a href={post.urls.view} target="_blank">
+                      (view)
+                    </a>
                   </TitleCell>
                 </td>
                 {columns.map((column, i) => {

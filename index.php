@@ -63,6 +63,16 @@ function init_client()
         'columns'=>$columns
     ]));
 }
+function get_post_columns($post)
+{
+    return get_post_meta( $post->ID, 'wpcc_columns', true );
+}
+function get_post_column($post,$slug)
+{
+    $columns = get_post_columns($post);
+
+    return isset($columns[$slug]) ? $columns[$slug] : null;
+}
 function get_columns()
 {
     return get_option('wpcc_columns');
@@ -99,12 +109,21 @@ function init_playground()
         {
             echo '<a href="' . $current_page . '&func=fix&slug=' . $slug . '">Fix ' . $name . '</a> | ';
         }
+
+        if(function_exists($fix_func . '_single'))
+        {
+            echo '<a href="' . $current_page . '&func=fix&slug=' . $slug . '&single=1">Fix ' . $name . ' Single</a> | ';
+        }
     }
     echo '</h3>';
 
     $func = isset($_REQUEST['func']) ? $_REQUEST['func'] : '';
     $slug = isset($_REQUEST['slug']) ? $_REQUEST['slug'] : '';
+
     $php_func = slug_to_function($slug,$func);
+
+    // TODO: add functionality for _single functions
+    $php_func = isset($_REQUEST['single']) ? $php_func . '_single' : $php_func;
 
     if(isset($func) && isset($slug) && function_exists($php_func))
     {
@@ -265,6 +284,13 @@ function wpcc_set_column($slug,$post_id,$val,$overwrite_if = null)
     $has_meta = metadata_exists('post',$post_id,'wpcc_columns');
     $columns = $has_meta ? get_post_meta( $post_id, 'wpcc_columns', true ) : [];
 
+    if($val === null)
+    {
+        if(isset($columns[$slug]))
+        {
+            unset($columns[$slug]);
+        }
+    }
     if($overwrite_if === null || array_search($columns[$slug],$overwrite_if) !== FALSE)
     {
         $columns[$slug] = $val;
@@ -272,7 +298,6 @@ function wpcc_set_column($slug,$post_id,$val,$overwrite_if = null)
 
     if($has_meta)
     {
-        
         update_post_meta( $post_id,'wpcc_columns' , $columns );
     }
     else
@@ -281,6 +306,9 @@ function wpcc_set_column($slug,$post_id,$val,$overwrite_if = null)
     }
 }
 
+/**
+ * Called by ajax action wpcc_update_post
+ */
 function update_post()
 {
     $post = json_decode(str_replace('\\"','"',$_REQUEST['post']));

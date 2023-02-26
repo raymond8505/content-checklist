@@ -274,7 +274,19 @@ function fix_column()
 
     die();
 }
+function wpcc_set_post_columns($post_id,$columns)
+{
+    $has_meta = metadata_exists('post',$post_id,'wpcc_columns');
 
+    if($has_meta)
+    {
+        update_post_meta( $post_id,'wpcc_columns' , $columns );
+    }
+    else
+    {
+        add_post_meta( $post_id,'wpcc_columns' , $columns );
+    }
+}
 /**
  * $slug column slug
  * $post_id
@@ -298,14 +310,7 @@ function wpcc_set_column($slug,$post_id,$val,$overwrite_if = null)
         $columns[$slug] = $val;
     }
 
-    if($has_meta)
-    {
-        update_post_meta( $post_id,'wpcc_columns' , $columns );
-    }
-    else
-    {
-        add_post_meta( $post_id,'wpcc_columns' , $columns );
-    }
+    wpcc_set_post_columns($post_id,$columns);
 }
 
 /**
@@ -317,10 +322,11 @@ function update_post()
 
     $columns = json_decode(str_replace('\\"','"',$_REQUEST['columns']));
 
-    foreach($columns as $column=>$val)
-    {
-        wpcc_set_column($column,$post_id,$val);
-    }
+    wpcc_set_post_columns($post_id,$columns);
+    // foreach($columns as $column=>$val)
+    // {
+    //     wpcc_set_column($column,$post_id,$val);
+    // }
     
     die('{"success":"success"}');
 }

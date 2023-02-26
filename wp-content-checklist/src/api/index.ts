@@ -106,7 +106,11 @@ export const fixPostColumn = async (post: Post, column: Column) => {
 
 export const updatePostOnServer = async (post: Post) => {
   const form = new FormData();
-  form.append("post", JSON.stringify(post));
+
+  // only send the post id so we don't have to worry about
+  // quotation mark fuckery in PHP
+  form.append("post", String(post.ID));
+  form.append("columns", JSON.stringify(post.columns));
 
   const resp = await apiFetch("update_post", {
     method: "POST",

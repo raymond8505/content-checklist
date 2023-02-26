@@ -65,7 +65,9 @@ function init_client()
 }
 function get_post_columns($post)
 {
-    return get_post_meta( $post->ID, 'wpcc_columns', true );
+    $post_id = is_object($post) ? $post->ID : $post;
+
+    return get_post_meta( $post_id, 'wpcc_columns', true );
 }
 function get_post_column($post,$slug)
 {
@@ -311,11 +313,13 @@ function wpcc_set_column($slug,$post_id,$val,$overwrite_if = null)
  */
 function update_post()
 {
-    $post = json_decode(str_replace('\\"','"',$_REQUEST['post']));
+    $post_id = $_REQUEST['post'];
 
-    foreach($post->columns as $column=>$val)
+    $columns = json_decode(str_replace('\\"','"',$_REQUEST['columns']));
+
+    foreach($columns as $column=>$val)
     {
-        wpcc_set_column($column,$post->ID,$val);
+        wpcc_set_column($column,$post_id,$val);
     }
     
     die('{"success":"success"}');

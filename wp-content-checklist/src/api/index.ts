@@ -1,4 +1,4 @@
-import { Post, Store, useStore } from "../store";
+import { Post, Store, useStore, Column } from "../store";
 
 const appHostParams = new URLSearchParams(location.search);
 const ajaxurl = appHostParams.get("ajaxurl");
@@ -19,7 +19,17 @@ export const useServerUpdate = (cb = () => {}) => {
   return () => {
     apiFetch("init").then((resp) => {
       resp.json().then((json) => {
-        setPosts(json.posts);
+        setPosts(
+          json.posts.filter((post) => {
+            return {
+              ...post,
+              urls: {
+                view: post.urls.view,
+                edit: decodeURIComponent(post.urls.edit),
+              },
+            };
+          })
+        );
         setColumns(json.columns);
         cb();
       });
@@ -74,6 +84,19 @@ export const fixColumn = async (slug) => {
   form.append("slug", slug);
 
   const resp = await apiFetch("fix_column", {
+    method: "POST",
+    body: form,
+  });
+
+  return handleApiResponse(resp);
+};
+
+export const fixPostColumn = async (post: Post, column: Column) => {
+  const form = new FormData();
+  form.append("column", column.slug);
+  form.append("post", String(post.ID));
+
+  const resp = await apiFetch("fix_post_column", {
     method: "POST",
     body: form,
   });

@@ -17,6 +17,7 @@ import { DeleteColumnModal } from "./modals/DeleteColumnModal";
 import {
   checkColumn,
   fixColumn,
+  fixPostColumn as fixPostColumnOnServer,
   updatePostOnServer,
   useServerUpdate,
 } from "../api";
@@ -90,11 +91,12 @@ const PostsTable = ({}) => {
   };
 
   const updateCell = (
-    post: Post | null,
-    column: Column,
+    post: Post | null | undefined,
+    column: Column | undefined,
     newVal: number | undefined = undefined
   ): Post | null => {
     if (!post) return null;
+    if (!column) return null;
 
     const newPost = { ...post };
 
@@ -141,6 +143,21 @@ const PostsTable = ({}) => {
     currentCell.current = { post, column };
   };
 
+  const getPostByID = (id) => posts.find((post) => post.ID === id);
+
+  const getColumnBySlug = (slug) =>
+    columns.find((column) => column.slug === slug);
+
+  const fixPostColumn = (post: Post, column: Column) => {
+    fixPostColumnOnServer(post, column).then((resp) => {
+      updateCell(
+        getPostByID(resp.data.post_id),
+        getColumnBySlug(resp.data.column),
+        resp.data.val
+      );
+    });
+  };
+
   useEffect(() => {
     const onCellKeyPress = (e) => {
       const { post, column } = currentCell.current;
@@ -161,6 +178,9 @@ const PostsTable = ({}) => {
           break;
         case "Backspace":
           updatePost(updateCell(post, column));
+          break;
+        case "f":
+          fixPostColumn(post, column);
           break;
       }
     };
@@ -238,7 +258,12 @@ const PostsTable = ({}) => {
                 <th className="col--id">{post.ID}</th>
                 <td className="col--title" style={{ left: postNameLeft }}>
                   <TitleCell>
-                    <a href={post.urls.edit}>{post.title}</a>
+                    <a
+                      href={post.urls.edit.replace("&amp;", "&")}
+                      target="_blank"
+                    >
+                      {post.title}
+                    </a>
                     <a href={post.urls.view}>(view)</a>
                   </TitleCell>
                 </td>

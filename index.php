@@ -293,6 +293,18 @@ function update_post()
     die('{"success":"success"}');
 }
 
+function fix_post_column()
+{
+    $func = slug_to_function($_POST['column'],'fix');
+    $func =  $func . '_single';
+
+    if(function_exists($func))
+    {
+        call_user_func($func,$_POST['post'],$_POST['column']);
+    }
+    die('{"error":"error"}');
+}
+
 add_action('admin_menu','init');
 add_action($action_root . '_wpcc_init','init_client');
 add_action($action_root . '_wpcc_create_column','create_column');
@@ -300,3 +312,4 @@ add_action($action_root . '_wpcc_delete_column','delete_column');
 add_action($action_root . '_wpcc_check_column','check_column');
 add_action($action_root . '_wpcc_fix_column','fix_column');
 add_action($action_root . '_wpcc_update_post','update_post');
+add_action($action_root . '_wpcc_fix_post_column','fix_post_column');

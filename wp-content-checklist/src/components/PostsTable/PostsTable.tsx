@@ -28,6 +28,15 @@ import { ColumnCell } from "../ColumnCell";
 import { columnVal } from "../../helpers";
 import { ControlCell, ControlRow } from "./PostsTable.styles";
 import { updateCell } from "./helpers";
+import { ColumnFilters } from "./ColumnFilters";
+
+export interface Filter {
+  undefined: boolean;
+  "-1": boolean;
+  "0": boolean;
+  "1": boolean;
+  show: boolean;
+}
 
 export const PostsTable = ({}) => {
   const { posts, columns, setPosts } = useStore() as any as Store; //todo do this the right way
@@ -44,7 +53,7 @@ export const PostsTable = ({}) => {
 
   const firstIDCell = useRef<HTMLTableCellElement>(null);
 
-  const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useState<Record<string, Filter>>({});
 
   const currentCell = useRef<{
     post: Post | null;
@@ -71,7 +80,7 @@ export const PostsTable = ({}) => {
           "0": false,
           "1": false,
           show: false,
-        };
+        } as Filter;
 
         return filters;
       }, {})
@@ -193,6 +202,16 @@ export const PostsTable = ({}) => {
     };
   }, [posts, setPosts]);
 
+  const toggleFilters = (slug) => {
+    setFilters((curFilters) => {
+      const newFilters = { ...curFilters };
+
+      newFilters[slug].show = !curFilters[slug].show;
+
+      return newFilters;
+    });
+  };
+
   return (
     <>
       <Table>
@@ -208,8 +227,10 @@ export const PostsTable = ({}) => {
                     alt="Filter Column"
                     onClick={() => {
                       console.log(filters);
+                      toggleFilters(column.slug);
                     }}
                   />
+                  <ColumnFilters show={filters[column.slug]?.show} />
                   <IconButton
                     src={checkIcon}
                     alt="Check Column"

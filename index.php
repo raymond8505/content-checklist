@@ -13,7 +13,7 @@ $is_localhost = isset($_SERVER['HTTP_ORIGIN']) && $_SERVER['HTTP_ORIGIN'] === 'h
 
 $action_root = $is_localhost ? 'wp_ajax_nopriv' : 'wp_ajax';
 
-$current_page = admin_url( "admin.php?page=".$_GET["page"] );
+$current_page = isset($_GET["page"]) ? admin_url( "admin.php?page=".$_GET["page"] ) : '';
 
 function render_page()
 {

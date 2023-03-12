@@ -6,45 +6,32 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useStore, Post, Store, Column } from "../store";
+import { useStore, Post, Store, Column } from "../../store";
 import styled from "@emotion/styled";
-import deleteIcon from "../assets/icons/delete.svg";
-import fixIcon from "../assets/icons/fix.svg";
-import checkIcon from "../assets/icons/check.svg";
-import { Icon } from "./common/Icon";
-import IconButton from "./common/IconButton";
-import { DeleteColumnModal } from "./modals/DeleteColumnModal";
+import deleteIcon from "../../assets/icons/delete.svg";
+import fixIcon from "../../assets/icons/fix.svg";
+import checkIcon from "../../assets/icons/check.svg";
+import { Icon } from "../common/Icon";
+import IconButton from "../common/IconButton";
+import { DeleteColumnModal } from "../modals/DeleteColumnModal";
 import {
   checkColumn,
   fixColumn,
   fixPostColumn as fixPostColumnOnServer,
   updatePostOnServer,
   useServerUpdate,
-} from "../api";
-import { CopyFunctionModal } from "./modals/CopyFunctionModal";
-import { Table, TitleCell } from "./PostsTable.styles";
-import { ColumnCell } from "./ColumnCell";
-import { columnVal } from "../helpers";
+} from "../../api";
+import { CopyFunctionModal } from "../modals/CopyFunctionModal";
+import { Table, TitleCell } from "../PostsTable.styles";
+import { ColumnCell } from "../ColumnCell";
+import { columnVal } from "../../helpers";
+import { ControlCell, ControlRow } from "./PostsTable.styles";
+import { updateCell } from "./helpers";
 
 const PostsTable = ({}) => {
   const { posts, columns, setPosts } = useStore() as any as Store; //todo do this the right way
 
   const updateFromServer = useServerUpdate();
-
-  const ControlRow = styled.tr`
-    &,
-    td {
-      border-bottom: none !important;
-    }
-  `;
-
-  const ControlCell = styled.td`
-    text-align: right;
-
-    button:not(:first-of-type) {
-      margin-left: 0.4em;
-    }
-  `;
 
   const [shouldShowDeleteModal, setShouldShowDeleteModal] = useState(false);
   const [columnToDelete, setColumnToDelete] = useState();
@@ -88,25 +75,6 @@ const PostsTable = ({}) => {
   const showCodeModal = (functionName) => {
     setFunctionToCopy(functionName);
     setShouldShowCodeModal(true);
-  };
-
-  const updateCell = (
-    post: Post | null | undefined,
-    column: Column | undefined,
-    newVal: number | undefined = undefined
-  ): Post | null => {
-    if (!post) return null;
-    if (!column) return null;
-
-    const newPost = { ...post };
-
-    if (newVal !== undefined) {
-      newPost.columns[column.slug] = newVal;
-    } else {
-      delete newPost.columns[column.slug];
-    }
-
-    return newPost;
   };
 
   const updatePostInStore = (newPost) => {

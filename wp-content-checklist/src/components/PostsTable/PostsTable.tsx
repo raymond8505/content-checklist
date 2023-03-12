@@ -11,6 +11,7 @@ import styled from "@emotion/styled";
 import deleteIcon from "../../assets/icons/delete.svg";
 import fixIcon from "../../assets/icons/fix.svg";
 import checkIcon from "../../assets/icons/check.svg";
+import filterIcon from "../../assets/icons/filter.svg";
 import { Icon } from "../common/Icon";
 import IconButton from "../common/IconButton";
 import { DeleteColumnModal } from "../modals/DeleteColumnModal";
@@ -43,6 +44,8 @@ export const PostsTable = ({}) => {
 
   const firstIDCell = useRef<HTMLTableCellElement>(null);
 
+  const [filters, setFilters] = useState({});
+
   const currentCell = useRef<{
     post: Post | null;
     column: Column | null;
@@ -58,6 +61,22 @@ export const PostsTable = ({}) => {
       }
     }, 1000);
   }, [firstIDCell, columns, posts]);
+
+  useEffect(() => {
+    setFilters(
+      columns.reduce((filters, column) => {
+        filters[column.slug] = {
+          undefined: false,
+          "-1": false,
+          "0": false,
+          "1": false,
+          show: false,
+        };
+
+        return filters;
+      }, {})
+    );
+  }, [columns]);
 
   const showDeleteModal = (column) => {
     setColumnToDelete(column);
@@ -184,6 +203,13 @@ export const PostsTable = ({}) => {
             {columns.map((column, i) => {
               return (
                 <ControlCell key={`column-header--control${i}`}>
+                  <IconButton
+                    src={filterIcon}
+                    alt="Filter Column"
+                    onClick={() => {
+                      console.log(filters);
+                    }}
+                  />
                   <IconButton
                     src={checkIcon}
                     alt="Check Column"

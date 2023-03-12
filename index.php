@@ -9,9 +9,11 @@
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: content-checklist
 */
-$is_localhost = isset($_SERVER['HTTP_ORIGIN']) && $_SERVER['HTTP_ORIGIN'] === 'http://127.0.0.1:5173';
+$is_localhost = isset($_SERVER['HTTP_ORIGIN']) && strpos($_SERVER['HTTP_ORIGIN'],'http://127.0.0.1') !== FALSE;
 
 $action_root = $is_localhost ? 'wp_ajax_nopriv' : 'wp_ajax';
+
+//die($_SERVER['HTTP_ORIGIN']);
 
 $current_page = isset($_GET["page"]) ? admin_url( "admin.php?page=".$_GET["page"] ) : '';
 

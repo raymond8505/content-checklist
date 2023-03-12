@@ -28,7 +28,7 @@ import { columnVal } from "../../helpers";
 import { ControlCell, ControlRow } from "./PostsTable.styles";
 import { updateCell } from "./helpers";
 
-const PostsTable = ({}) => {
+export const PostsTable = ({}) => {
   const { posts, columns, setPosts } = useStore() as any as Store; //todo do this the right way
 
   const updateFromServer = useServerUpdate();
@@ -286,5 +286,3 @@ const PostsTable = ({}) => {
     </>
   );
 };
-
-export default PostsTable;

@@ -1,6 +1,6 @@
 import {css} from '@emotion/css'
 import { useEffect, useState } from 'react';
-import PostsTable from './PostsTable';
+import {PostsTable} from './PostsTable/PostsTable';
 import CreateColumnModal from './modals/CreateColumnModal';
 import { useCallback } from 'react';
 import { GlobalStyles } from './common/GlobalStyles';

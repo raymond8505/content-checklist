@@ -1,1 +1,1 @@
-export * as PostsTable from "./PostsTable";
+export { PostsTable } from "./PostsTable";

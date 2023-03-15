@@ -1,6 +1,6 @@
 import { Post, Column } from "./store";
 
-export const columnVal = (post, column) => {
+export const columnVal = (post: Post, column: Column) => {
   switch (post.columns[column.slug]) {
     case -1:
       return "N/A";
@@ -23,6 +23,8 @@ export const valueToClassName = (val) => {
       return `${prefix}no`;
     case 1:
       return `${prefix}yes`;
+    default:
+      return "";
   }
 };
 

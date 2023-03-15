@@ -5,6 +5,7 @@ import CreateColumnModal from './modals/CreateColumnModal';
 import { useCallback } from 'react';
 import { GlobalStyles } from './common/GlobalStyles';
 import styled from '@emotion/styled';
+import { PostsSheet } from './PostsSheet';
 
 const Header = styled.header`
     width: 100%;
@@ -34,7 +35,7 @@ export const MainBody = () => {
         <Header>
             <button onClick={onCreateColumnClick}>Create Column</button>
         </Header>
-        <PostsTable />
+        <PostsSheet />
         {showCreateColumn && <CreateColumnModal onClose={onCloseCreateColumnClick} />}
     </div>
     </>

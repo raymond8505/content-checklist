@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { SyntheticEvent, useEffect, useState } from "react";
 import { useStore, Store, Column, Post } from "../store";
 import Spreadsheet, {
   CellBase,
@@ -6,8 +6,15 @@ import Spreadsheet, {
   DataEditorProps,
   Matrix,
 } from "react-spreadsheet";
-import { columnVal, getColumnVal, valueToClassName } from "../helpers";
+import {
+  columnLabel,
+  columnVal,
+  getColumnVal,
+  valueToClassName,
+} from "../helpers";
 import styled from "@emotion/styled";
+import { Spinner } from "./common/Spinner";
+import { updatePostOnServer } from "../api";
 
 const Wrapper = styled.div`
   .column-cell--na {
@@ -43,11 +50,76 @@ const Wrapper = styled.div`
     left: 72px;
   }
 `;
+
+const InnerSelect = styled.select`
+  width: 100%;
+`;
 type CellWithMeta = CellBase & { post: Post; column: Column };
+
 const Editor: DataEditorComponent = ({ cell, onChange }) => {
   const { post, column } = cell as CellWithMeta;
+  const [loading, setLoading] = useState(false);
 
-  return <div>poops</div>;
+  const onSelectChange = (e: SyntheticEvent) => {
+    let value: string | undefined | number = (
+      e.currentTarget as HTMLSelectElement
+    ).value;
+
+    if (value === "") {
+      value = undefined;
+    } else {
+      value = Number(value);
+    }
+
+    const newPost: Post = {
+      ID: 0,
+      title: "",
+      columns: {},
+      urls: {
+        edit: "",
+        view: "",
+      },
+    };
+
+    for (let i in post) {
+      if (i === "columns") continue;
+      newPost[i] = post[i];
+    }
+
+    for (let i in post.columns) {
+      newPost.columns[i] = post.columns[i];
+    }
+
+    newPost.columns[column.slug] = value as number;
+
+    setLoading(true);
+
+    updatePostOnServer(newPost).then((resp) => {
+      if (resp.success) {
+        setLoading(false);
+        onChange({
+          ...cell,
+          post: newPost,
+          value: columnLabel(value as number | undefined),
+          className: valueToClassName(value),
+        } as CellBase);
+      }
+    });
+  };
+  //TODO: make this the select box with spinner and wire up to API
+  return loading ? (
+    <Spinner />
+  ) : (
+    <InnerSelect
+      defaultValue={getColumnVal(column, post)}
+      onChange={onSelectChange}
+    >
+      <option value={undefined}></option>
+      <option value={-1}>N/A</option>
+      <option value={0}>No</option>
+      <option value={1}>Yes</option>
+    </InnerSelect>
+  );
 };
 export const PostsSheet = ({}) => {
   const { posts, columns, setPosts } = useStore() as any as Store; //todo do this the right way)

@@ -1,7 +1,10 @@
 import { Post, Column } from "./store";
 
-export const columnVal = (post: Post, column: Column) => {
-  switch (post.columns[column.slug]) {
+export const columnVal = (post: Post, column: Column) =>
+  columnLabel(post.columns[column.slug]);
+
+export const columnLabel = (val: number | undefined) => {
+  switch (val) {
     case -1:
       return "N/A";
     case 0:

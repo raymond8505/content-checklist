@@ -4,6 +4,7 @@ import Spreadsheet, {
   CellBase,
   DataEditorComponent,
   DataEditorProps,
+  DataViewerComponent,
   Matrix,
 } from "react-spreadsheet";
 import {
@@ -49,6 +50,10 @@ const Wrapper = styled.div`
   th:nth-child(2) {
     left: 72px;
   }
+  .Spreadsheet__header {
+    color: black;
+    font-weight: bold;
+  }
 `;
 
 const InnerSelect = styled.select`
@@ -56,6 +61,9 @@ const InnerSelect = styled.select`
 `;
 type CellWithMeta = CellBase & { post: Post; column: Column };
 
+const Viewer: DataViewerComponent = ({ cell }) => {
+  return cell?.value;
+};
 const Editor: DataEditorComponent = ({ cell, onChange }) => {
   const { post, column } = cell as CellWithMeta;
   const [loading, setLoading] = useState(false);
@@ -79,6 +87,7 @@ const Editor: DataEditorComponent = ({ cell, onChange }) => {
         edit: "",
         view: "",
       },
+      status: "",
     };
 
     for (let i in post) {
@@ -121,6 +130,14 @@ const Editor: DataEditorComponent = ({ cell, onChange }) => {
     </InnerSelect>
   );
 };
+const NameCellWrapper = styled.span`
+  a:nth-child(2) {
+    margin-left: 0.5em;
+    padding-left: 0.5em;
+    display: inline-block;
+    border-left: 1px solid black;
+  }
+`;
 export const PostsSheet = ({}) => {
   const { posts, columns, setPosts } = useStore() as any as Store; //todo do this the right way)
   const [data, setData] = useState<Matrix<CellBase<any>>>([]);
@@ -157,7 +174,18 @@ export const PostsSheet = ({}) => {
       const postRow: CellBase<any>[] = [];
 
       postRow.push({
-        value: post.title,
+        value: (
+          <NameCellWrapper>
+            <a href={post.urls.edit} target="_blank">
+              {post.title}
+            </a>{" "}
+            <a href={post.urls.view} target="_blank">
+              (view)
+            </a>
+          </NameCellWrapper>
+        ),
+        readOnly: true,
+        //DataViewer: Viewer,
       });
 
       columns.forEach((column) => {

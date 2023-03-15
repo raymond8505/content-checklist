@@ -8,6 +8,8 @@ export interface Post {
     view: string;
   };
   title: string;
+  status: string;
+  posted: Date;
 }
 
 export interface Column {

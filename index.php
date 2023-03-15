@@ -54,7 +54,9 @@ function init_client()
                 'view'=>get_permalink( $post ),
                 'edit'=>$is_localhost ? 'http://localhost/raymondsfood/wp-admin/post.php?post=' . $post->ID . '&action=edit' 
                 : get_edit_post_link( $post )
-            ]
+            ],
+            'status'=>$post->post_status,
+            'posted'=>$post->post_date
         ];
 
         $posts_for_client[] = $post_for_client;

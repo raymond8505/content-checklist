@@ -28,26 +28,26 @@ const Wrapper = styled.div`
     background: rgb(153 0 0 / 18%) !important;
   }
 
-  tr:first-child {
+  tr:first-of-type {
     position: sticky;
     top: 2em;
     background: white;
     z-index: 3;
   }
 
-  th:nth-child(1),
-  td:nth-child(2),
-  th:nth-child(2) {
+  th:nth-of-type(1),
+  td:nth-of-type(2),
+  th:nth-of-type(2) {
     position: sticky;
     z-index: 2;
     background: white;
   }
-  th:nth-child(1) {
+  th:nth-of-type(1) {
     left: 0;
     width: 72px;
   }
-  td:nth-child(2),
-  th:nth-child(2) {
+  td:nth-of-type(2),
+  th:nth-of-type(2) {
     left: 72px;
   }
   .Spreadsheet__header {
@@ -134,7 +134,7 @@ const Editor: DataEditorComponent = ({ cell, onChange }) => {
   );
 };
 const NameCellWrapper = styled.span`
-  a:nth-child(2) {
+  a:nth-of-type(2) {
     margin-left: 0.5em;
     padding-left: 0.5em;
     display: inline-block;
@@ -151,27 +151,19 @@ export const PostsSheet = ({}) => {
     console.log(data);
   };
   useEffect(() => {
-    const titleRow: CellBase<any>[] = [
-      {
-        value: "ID",
-      },
-      {
-        value: "Post Name",
-      },
-    ];
-    const emptyRow = new Array(columns.length + 1);
+    const emptyRow = new Array(columns.length + 2);
 
     emptyRow.fill(
       {
         value: "",
       },
-      columns.length + 1
+      columns.length + 2
     );
     const rows: Matrix<CellBase<any>> = [emptyRow];
 
     setColumnLabels(["Status", "Post", ...columns.map((c) => c.name)]);
 
-    setRowLabels(posts.map((p) => String(p.ID)));
+    setRowLabels(["", ...posts.map((p) => String(p.ID))]);
 
     posts.forEach((post) => {
       const postRow: CellBase<any>[] = [];

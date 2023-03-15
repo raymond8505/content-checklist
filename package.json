@@ -8,7 +8,10 @@
     "zustand": "^4.3.2"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "cd ./wp-content-checklist && yarn vite",
+    "build": "cd ./wp-content-checklist && vite build",
+    "preview": "cd ./wp-content-checklist && vite preview",
+    "deploy": "cd ./wp-content-checklist && yarn build && cd ../../../themes/raymondsfood && yarn deploy"
   },
   "author": "Raymond Selzer",
   "license": "ISC",

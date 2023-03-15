@@ -54,6 +54,9 @@ const Wrapper = styled.div`
     color: black;
     font-weight: bold;
   }
+  .Spreadsheet__cell--readonly {
+    color: black;
+  }
 `;
 
 const InnerSelect = styled.select`
@@ -166,13 +169,17 @@ export const PostsSheet = ({}) => {
     );
     const rows: Matrix<CellBase<any>> = [emptyRow];
 
-    setColumnLabels(columns.map((c) => c.name));
+    setColumnLabels(["Status", "Post", ...columns.map((c) => c.name)]);
 
     setRowLabels(posts.map((p) => String(p.ID)));
 
     posts.forEach((post) => {
       const postRow: CellBase<any>[] = [];
 
+      postRow.push({
+        value: post.status,
+        readOnly: true,
+      });
       postRow.push({
         value: (
           <NameCellWrapper>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useStore, Store } from "../store";
+import { useStore, Store, Column, Post } from "../store";
 import Spreadsheet, {
   CellBase,
   DataEditorComponent,
@@ -43,8 +43,9 @@ const Wrapper = styled.div`
     left: 72px;
   }
 `;
+type CellWithMeta = CellBase & { post: Post; column: Column };
 const Editor: DataEditorComponent = ({ cell, onChange }) => {
-  console.log(props);
+  const { post, column } = cell as CellWithMeta;
 
   return <div>poops</div>;
 };
@@ -111,7 +112,6 @@ export const PostsSheet = ({}) => {
         data={data}
         columnLabels={columnLabels}
         rowLabels={rowLabels}
-        onChange={onSheetChange}
       />
     </Wrapper>
   );

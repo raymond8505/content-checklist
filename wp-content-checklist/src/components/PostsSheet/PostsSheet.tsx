@@ -1,34 +1,19 @@
-import React, { SyntheticEvent, useEffect, useMemo, useState } from "react";
-import { useStore, Store, Column, Post } from "../../store";
-import Spreadsheet, {
-  CellBase,
-  DataEditorComponent,
-  DataEditorProps,
-  DataViewerComponent,
-  Matrix,
-} from "react-spreadsheet";
-import {
-  columnLabel,
-  columnVal,
-  getColumnVal,
-  htmlDecode,
-  valueToClassName,
-} from "../../helpers";
-import styled from "@emotion/styled";
-import { Spinner } from "../common/Spinner";
-import { updatePostOnServer } from "../../api";
+import React, { useEffect, useState } from "react";
+import { useStore, Store } from "../../store";
+import Spreadsheet, { CellBase, Matrix } from "react-spreadsheet";
+import { columnVal, getColumnVal, valueToClassName } from "../../helpers";
 import Pagination from "./Pagination/Pagination";
-import { InnerSelect, NameCellWrapper, Wrapper } from "./PostsSheet.styles";
+import { Wrapper } from "./PostsSheet.styles";
 import { CellWithMeta } from "./types";
 import { TitleCellViewer } from "./TitleCellViewer";
 import { ColumnCellEditor } from "./ColumnCellEditor";
 
 export const PostsSheet = ({}) => {
-  const { posts, columns, setPosts } = useStore() as any as Store; //todo do this the right way)
+  const { posts, columns } = useStore() as any as Store; //todo do this the right way)
   const [data, setData] = useState<Matrix<CellBase<any>>>([]);
   const [columnLabels, setColumnLabels] = useState<string[]>([]);
   const [rowLabels, setRowLabels] = useState<string[]>([]);
-  const [perPage, setPerPage] = useState(45);
+  const perPage = 48;
   const [curPage, setCurPage] = useState(0);
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useStore, Store } from "../../store";
 import Spreadsheet, { CellBase, Matrix } from "react-spreadsheet";
 import { columnVal, getColumnVal, valueToClassName } from "../../helpers";
@@ -15,6 +15,24 @@ export const PostsSheet = ({}) => {
   const [rowLabels, setRowLabels] = useState<string[]>([]);
   const perPage = 48;
   const [curPage, setCurPage] = useState(0);
+  const [contentLeft, setContentLeft] = useState(0);
+
+  useLayoutEffect(() => {
+    //adminmenuwrap
+    const wpContent = document.querySelector("#wpcontent") as HTMLDivElement;
+
+    if (wpContent) {
+      const contentRect = wpContent.getBoundingClientRect();
+
+      const paddingLeft = parseInt(
+        getComputedStyle(wpContent)
+          .getPropertyValue("padding-left")
+          .replace("px", "")
+      );
+
+      setContentLeft(paddingLeft + contentRect.left);
+    }
+  }, [posts, columns, curPage, perPage]);
 
   useEffect(() => {
     const emptyRow = new Array(columns.length + 2);
@@ -71,7 +89,7 @@ export const PostsSheet = ({}) => {
     setData(rows);
   }, [posts, columns, curPage, perPage]);
   return (
-    <Wrapper>
+    <Wrapper contentLeft={contentLeft}>
       <Spreadsheet
         data={data}
         columnLabels={columnLabels}

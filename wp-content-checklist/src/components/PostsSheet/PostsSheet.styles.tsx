@@ -9,7 +9,9 @@ export const NameCellWrapper = styled.span`
   }
 `;
 
-export const Wrapper = styled.div`
+const idColWidth = 72;
+const statusColWidth = 72;
+export const Wrapper = styled.div<{ contentLeft: number }>`
   .column-cell--na {
     background: rgb(0 0 0 / 20%) !important;
   }
@@ -27,20 +29,32 @@ export const Wrapper = styled.div`
     z-index: 3;
   }
 
-  th:nth-of-type(1),
-  td:nth-of-type(2),
-  th:nth-of-type(2) {
+  th:nth-of-type(1), /* id column */
+  td:nth-of-type(1), /* status column */
+  th:nth-of-type(2),  
+  td:nth-of-type(2), /* title column */
+  th:nth-of-type(3) {
     position: sticky;
     z-index: 2;
     background: white;
   }
+
+  /* id column */
   th:nth-of-type(1) {
-    left: 0;
-    width: 72px;
+    left: ${(props) => props.contentLeft}px;
+    width: ${idColWidth}px;
   }
-  td:nth-of-type(2),
+
+  /* status column */
+  td:nth-of-type(1),
   th:nth-of-type(2) {
-    left: 72px;
+    left: ${(props) => props.contentLeft + idColWidth}px;
+  }
+
+  /* title column */
+  td:nth-of-type(2),
+  th:nth-of-type(3) {
+    left: ${(props) => props.contentLeft + idColWidth + statusColWidth}px;
   }
   .Spreadsheet__header {
     color: black;

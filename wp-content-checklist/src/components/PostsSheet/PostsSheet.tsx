@@ -37,7 +37,7 @@ const TitleCellViewer: DataViewerComponent = ({ cell }) => {
   );
 };
 
-const Editor: DataEditorComponent = ({ cell, onChange }) => {
+const Editor: DataEditorComponent = ({ cell, onChange, exitEditMode }) => {
   const { post, column } = cell as CellWithMeta;
   const [loading, setLoading] = useState(false);
 
@@ -80,6 +80,7 @@ const Editor: DataEditorComponent = ({ cell, onChange }) => {
     updatePostOnServer(newPost).then((resp) => {
       if (resp.success) {
         setLoading(false);
+        exitEditMode();
         onChange({
           ...cell,
           post: newPost,

@@ -5,7 +5,7 @@ import CreateColumnModal from './modals/CreateColumnModal';
 import { useCallback } from 'react';
 import { GlobalStyles } from './common/GlobalStyles';
 import styled from '@emotion/styled';
-import { PostsSheet } from './PostsSheet';
+import { PostsSheet } from './PostsSheet/PostsSheet';
 
 const Header = styled.header`
     width: 100%;

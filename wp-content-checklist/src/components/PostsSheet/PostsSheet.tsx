@@ -1,5 +1,5 @@
-import React, { SyntheticEvent, useEffect, useState } from "react";
-import { useStore, Store, Column, Post } from "../store";
+import React, { SyntheticEvent, useEffect, useMemo, useState } from "react";
+import { useStore, Store, Column, Post } from "../../store";
 import Spreadsheet, {
   CellBase,
   DataEditorComponent,
@@ -12,56 +12,13 @@ import {
   columnVal,
   getColumnVal,
   valueToClassName,
-} from "../helpers";
+} from "../../helpers";
 import styled from "@emotion/styled";
-import { Spinner } from "./common/Spinner";
-import { updatePostOnServer } from "../api";
+import { Spinner } from "../common/Spinner";
+import { updatePostOnServer } from "../../api";
+import Pagination from "./Pagination/Pagination";
+import { InnerSelect, NameCellWrapper, Wrapper } from "./PostsSheet.styles";
 
-const Wrapper = styled.div`
-  .column-cell--na {
-    background: rgb(0 0 0 / 20%) !important;
-  }
-  .column-cell--yes {
-    background: rgb(0 153 0 / 25%) !important;
-  }
-  .column-cell--no {
-    background: rgb(153 0 0 / 18%) !important;
-  }
-
-  tr:first-of-type {
-    position: sticky;
-    top: 2em;
-    background: white;
-    z-index: 3;
-  }
-
-  th:nth-of-type(1),
-  td:nth-of-type(2),
-  th:nth-of-type(2) {
-    position: sticky;
-    z-index: 2;
-    background: white;
-  }
-  th:nth-of-type(1) {
-    left: 0;
-    width: 72px;
-  }
-  td:nth-of-type(2),
-  th:nth-of-type(2) {
-    left: 72px;
-  }
-  .Spreadsheet__header {
-    color: black;
-    font-weight: bold;
-  }
-  .Spreadsheet__cell--readonly {
-    color: black;
-  }
-`;
-
-const InnerSelect = styled.select`
-  width: 100%;
-`;
 type CellWithMeta = CellBase & { post: Post; column: Column };
 
 const TitleCellViewer: DataViewerComponent = ({ cell }) => {
@@ -78,6 +35,7 @@ const TitleCellViewer: DataViewerComponent = ({ cell }) => {
     </NameCellWrapper>
   );
 };
+
 const Editor: DataEditorComponent = ({ cell, onChange }) => {
   const { post, column } = cell as CellWithMeta;
   const [loading, setLoading] = useState(false);
@@ -102,6 +60,7 @@ const Editor: DataEditorComponent = ({ cell, onChange }) => {
         view: "",
       },
       status: "",
+      posted: new Date(),
     };
 
     for (let i in post) {
@@ -144,24 +103,15 @@ const Editor: DataEditorComponent = ({ cell, onChange }) => {
     </InnerSelect>
   );
 };
-const NameCellWrapper = styled.span`
-  a:nth-of-type(2) {
-    margin-left: 0.5em;
-    padding-left: 0.5em;
-    display: inline-block;
-    border-left: 1px solid black;
-  }
-`;
+
 export const PostsSheet = ({}) => {
   const { posts, columns, setPosts } = useStore() as any as Store; //todo do this the right way)
   const [data, setData] = useState<Matrix<CellBase<any>>>([]);
   const [columnLabels, setColumnLabels] = useState<string[]>([]);
   const [rowLabels, setRowLabels] = useState<string[]>([]);
-  const limit = 50;
+  const [perPage, setPerPage] = useState(45);
+  const [curPage, setCurPage] = useState(0);
 
-  const onSheetChange = (data) => {
-    console.log(data);
-  };
   useEffect(() => {
     const emptyRow = new Array(columns.length + 2);
 
@@ -175,9 +125,9 @@ export const PostsSheet = ({}) => {
 
     setColumnLabels(["Status", "Post", ...columns.map((c) => c.name)]);
 
-    setRowLabels(["", ...posts.slice(0, limit).map((p) => String(p.ID))]);
+    setRowLabels(["", ...posts.slice(0, perPage).map((p) => String(p.ID))]);
 
-    posts.slice(0, limit).forEach((post) => {
+    posts.slice(0, perPage).forEach((post) => {
       const postRow: CellBase<any>[] = [];
 
       postRow.push({
@@ -215,6 +165,12 @@ export const PostsSheet = ({}) => {
         data={data}
         columnLabels={columnLabels}
         rowLabels={rowLabels}
+      />
+      <Pagination
+        perPage={perPage}
+        curPage={curPage}
+        total={posts.length}
+        onChange={() => {}}
       />
     </Wrapper>
   );

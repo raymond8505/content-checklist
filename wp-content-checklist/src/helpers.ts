@@ -42,3 +42,8 @@ export const nextVal = (curVal: number): number => {
 
 export const nextColumnVal = (column: Column, post: Post) =>
   nextVal(getColumnVal(column, post));
+
+export function htmlDecode(input) {
+  var doc = new DOMParser().parseFromString(input, "text/html");
+  return doc.documentElement.textContent;
+}

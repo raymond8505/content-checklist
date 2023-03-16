@@ -11,6 +11,7 @@ import {
   columnLabel,
   columnVal,
   getColumnVal,
+  htmlDecode,
   valueToClassName,
 } from "../../helpers";
 import styled from "@emotion/styled";
@@ -27,7 +28,7 @@ const TitleCellViewer: DataViewerComponent = ({ cell }) => {
   return (
     <NameCellWrapper>
       <a href={post.urls.edit} target="_blank">
-        {post.title}
+        {htmlDecode(post.title)}
       </a>{" "}
       <a href={post.urls.view} target="_blank">
         (view)

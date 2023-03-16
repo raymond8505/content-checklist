@@ -27,10 +27,10 @@ const TitleCellViewer: DataViewerComponent = ({ cell }) => {
 
   return (
     <NameCellWrapper>
-      <a href={post.urls.edit} target="_blank">
+      <a href={htmlDecode(post.urls.edit)} target="_blank">
         {htmlDecode(post.title)}
       </a>{" "}
-      <a href={post.urls.view} target="_blank">
+      <a href={htmlDecode(post.urls.view)} target="_blank">
         (view)
       </a>
     </NameCellWrapper>

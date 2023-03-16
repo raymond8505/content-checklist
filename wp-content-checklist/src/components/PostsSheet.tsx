@@ -64,8 +64,19 @@ const InnerSelect = styled.select`
 `;
 type CellWithMeta = CellBase & { post: Post; column: Column };
 
-const Viewer: DataViewerComponent = ({ cell }) => {
-  return cell?.value;
+const TitleCellViewer: DataViewerComponent = ({ cell }) => {
+  const { post } = cell as CellWithMeta;
+
+  return (
+    <NameCellWrapper>
+      <a href={post.urls.edit} target="_blank">
+        {post.title}
+      </a>{" "}
+      <a href={post.urls.view} target="_blank">
+        (view)
+      </a>
+    </NameCellWrapper>
+  );
 };
 const Editor: DataEditorComponent = ({ cell, onChange }) => {
   const { post, column } = cell as CellWithMeta;
@@ -146,6 +157,7 @@ export const PostsSheet = ({}) => {
   const [data, setData] = useState<Matrix<CellBase<any>>>([]);
   const [columnLabels, setColumnLabels] = useState<string[]>([]);
   const [rowLabels, setRowLabels] = useState<string[]>([]);
+  const limit = 50;
 
   const onSheetChange = (data) => {
     console.log(data);
@@ -163,9 +175,9 @@ export const PostsSheet = ({}) => {
 
     setColumnLabels(["Status", "Post", ...columns.map((c) => c.name)]);
 
-    setRowLabels(["", ...posts.map((p) => String(p.ID))]);
+    setRowLabels(["", ...posts.slice(0, limit).map((p) => String(p.ID))]);
 
-    posts.forEach((post) => {
+    posts.slice(0, limit).forEach((post) => {
       const postRow: CellBase<any>[] = [];
 
       postRow.push({
@@ -173,19 +185,11 @@ export const PostsSheet = ({}) => {
         readOnly: true,
       });
       postRow.push({
-        value: (
-          <NameCellWrapper>
-            <a href={post.urls.edit} target="_blank">
-              {post.title}
-            </a>{" "}
-            <a href={post.urls.view} target="_blank">
-              (view)
-            </a>
-          </NameCellWrapper>
-        ),
+        value: "",
+        post,
         readOnly: true,
-        //DataViewer: Viewer,
-      });
+        DataViewer: TitleCellViewer,
+      } as CellWithMeta);
 
       columns.forEach((column) => {
         const value = columnVal(post, column);

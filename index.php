@@ -19,11 +19,26 @@ $current_page = isset($_GET["page"]) ? admin_url( "admin.php?page=".$_GET["page"
 
 function render_page()
 {
-    $app_url = plugin_dir_url('/content-checklist/wp-content-checklist/dist/index.html');
+    //$app_url = plugin_dir_path('/content-checklist/wp-content-checklist/dist/index.html');
 
-    $app_url .= '?ajaxurl=' . admin_url( 'admin-ajax.php' );
+    //new dBug(plugin_dir_path(__FILE__) . 'wp-content-checklist/dist/index.html');
+    // $app_url .= '?ajaxurl=' . admin_url( 'admin-ajax.php' );
 
-    echo '<iframe style="width: 100%; height: calc(100vh - 4em)" src="'. $app_url . '"></iframe>';
+    // echo '<iframe style="width: 100%; height: calc(100vh - 4em)" src="'. $app_url . '"></iframe>';
+    ob_start();
+
+    include(plugin_dir_path(__FILE__) . 'wp-content-checklist/dist/index.html');
+
+    $html = ob_get_contents();
+
+    ob_end_clean();
+
+    $html = str_replace('src="./','src="../wp-content/plugins/content-checklist/wp-content-checklist/dist/',$html);
+    //new dBug($html);
+    preg_match_all('/src="([^"]+)"/',$html,$matches);
+
+    echo '<script type="module" crossorigin src="' . $matches[1][0] . '" type="module"></script>';
+    echo '<div id="root" style="position: relative;"></div>';
 
 }
 
@@ -95,7 +110,7 @@ function init_playground()
 
     //new dBug($columns);
 
-    echo '<script src="' . plugin_dir_url('/content-checklist/playground/playground.js') . 'playground.js"></script>';
+    echo '<script src="' . plugin_dir_url('/content-checklist/playground/playground.js') . 'playground.js"></.+src=';
 
     echo '<h3>';
     foreach($columns as $i=>$column)

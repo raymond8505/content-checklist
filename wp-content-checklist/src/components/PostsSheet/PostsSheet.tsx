@@ -125,40 +125,47 @@ export const PostsSheet = ({}) => {
 
     setColumnLabels(["Status", "Post", ...columns.map((c) => c.name)]);
 
-    setRowLabels(["", ...posts.slice(0, perPage).map((p) => String(p.ID))]);
+    setRowLabels([
+      "",
+      ...posts
+        .slice(curPage * perPage, curPage * perPage + perPage)
+        .map((p) => String(p.ID)),
+    ]);
 
-    posts.slice(0, perPage).forEach((post) => {
-      const postRow: CellBase<any>[] = [];
-
-      postRow.push({
-        value: post.status,
-        readOnly: true,
-      });
-      postRow.push({
-        value: "",
-        post,
-        readOnly: true,
-        DataViewer: TitleCellViewer,
-      } as CellWithMeta);
-
-      columns.forEach((column) => {
-        const value = columnVal(post, column);
+    posts
+      .slice(curPage * perPage, curPage * perPage + perPage)
+      .forEach((post) => {
+        const postRow: CellBase<any>[] = [];
 
         postRow.push({
-          //@ts-expect-error
-          post,
-          column,
-          value,
-          className: valueToClassName(getColumnVal(column, post)),
-          DataEditor: Editor,
+          value: post.status,
+          readOnly: true,
         });
+        postRow.push({
+          value: "",
+          post,
+          readOnly: true,
+          DataViewer: TitleCellViewer,
+        } as CellWithMeta);
+
+        columns.forEach((column) => {
+          const value = columnVal(post, column);
+
+          postRow.push({
+            //@ts-expect-error
+            post,
+            column,
+            value,
+            className: valueToClassName(getColumnVal(column, post)),
+            DataEditor: Editor,
+          });
+        });
+
+        rows.push(postRow);
       });
 
-      rows.push(postRow);
-    });
-
     setData(rows);
-  }, [posts, columns]);
+  }, [posts, columns, curPage, perPage]);
   return (
     <Wrapper>
       <Spreadsheet
@@ -166,11 +173,12 @@ export const PostsSheet = ({}) => {
         columnLabels={columnLabels}
         rowLabels={rowLabels}
       />
+
       <Pagination
         perPage={perPage}
         curPage={curPage}
         total={posts.length}
-        onChange={() => {}}
+        onChange={setCurPage}
       />
     </Wrapper>
   );

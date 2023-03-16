@@ -19,92 +19,9 @@ import { Spinner } from "../common/Spinner";
 import { updatePostOnServer } from "../../api";
 import Pagination from "./Pagination/Pagination";
 import { InnerSelect, NameCellWrapper, Wrapper } from "./PostsSheet.styles";
-
-type CellWithMeta = CellBase & { post: Post; column: Column };
-
-const TitleCellViewer: DataViewerComponent = ({ cell }) => {
-  const { post } = cell as CellWithMeta;
-
-  return (
-    <NameCellWrapper>
-      <a href={htmlDecode(post.urls.edit)} target="_blank">
-        {htmlDecode(post.title)}
-      </a>{" "}
-      <a href={htmlDecode(post.urls.view)} target="_blank">
-        (view)
-      </a>
-    </NameCellWrapper>
-  );
-};
-
-const Editor: DataEditorComponent = ({ cell, onChange, exitEditMode }) => {
-  const { post, column } = cell as CellWithMeta;
-  const [loading, setLoading] = useState(false);
-
-  const onSelectChange = (e: SyntheticEvent) => {
-    let value: string | undefined | number = (
-      e.currentTarget as HTMLSelectElement
-    ).value;
-
-    if (value === "") {
-      value = undefined;
-    } else {
-      value = Number(value);
-    }
-
-    const newPost: Post = {
-      ID: 0,
-      title: "",
-      columns: {},
-      urls: {
-        edit: "",
-        view: "",
-      },
-      status: "",
-      posted: new Date(),
-    };
-
-    for (let i in post) {
-      if (i === "columns") continue;
-      newPost[i] = post[i];
-    }
-
-    for (let i in post.columns) {
-      newPost.columns[i] = post.columns[i];
-    }
-
-    newPost.columns[column.slug] = value as number;
-
-    setLoading(true);
-
-    updatePostOnServer(newPost).then((resp) => {
-      if (resp.success) {
-        setLoading(false);
-        exitEditMode();
-        onChange({
-          ...cell,
-          post: newPost,
-          value: columnLabel(value as number | undefined),
-          className: valueToClassName(value),
-        } as CellBase);
-      }
-    });
-  };
-  //TODO: make this the select box with spinner and wire up to API
-  return loading ? (
-    <Spinner />
-  ) : (
-    <InnerSelect
-      defaultValue={getColumnVal(column, post)}
-      onChange={onSelectChange}
-    >
-      <option value={undefined}></option>
-      <option value={-1}>N/A</option>
-      <option value={0}>No</option>
-      <option value={1}>Yes</option>
-    </InnerSelect>
-  );
-};
+import { CellWithMeta } from "./types";
+import { TitleCellViewer } from "./TitleCellViewer";
+import { ColumnCellEditor } from "./ColumnCellEditor";
 
 export const PostsSheet = ({}) => {
   const { posts, columns, setPosts } = useStore() as any as Store; //todo do this the right way)
@@ -159,7 +76,7 @@ export const PostsSheet = ({}) => {
             column,
             value,
             className: valueToClassName(getColumnVal(column, post)),
-            DataEditor: Editor,
+            DataEditor: ColumnCellEditor,
           });
         });
 

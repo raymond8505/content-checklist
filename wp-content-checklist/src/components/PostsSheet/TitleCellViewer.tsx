@@ -7,7 +7,7 @@ import React from "react";
 export const TitleCellViewer: DataViewerComponent = ({ cell }) => {
   const { post } = cell as CellWithMeta;
 
-  return (
+  return post ? (
     <NameCellWrapper>
       <a href={htmlDecode(post.urls.edit)} target="_blank">
         {htmlDecode(post.title)}
@@ -16,5 +16,5 @@ export const TitleCellViewer: DataViewerComponent = ({ cell }) => {
         (view)
       </a>
     </NameCellWrapper>
-  );
+  ) : null;
 };

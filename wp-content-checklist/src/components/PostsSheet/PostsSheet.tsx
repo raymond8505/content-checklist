@@ -7,6 +7,7 @@ import { Wrapper } from "./PostsSheet.styles";
 import { CellWithMeta } from "./types";
 import { TitleCellViewer } from "./TitleCellViewer";
 import { ColumnCellEditor } from "./ColumnCellEditor";
+import { FooterCellViewer } from "./FooterCellViewer";
 
 export const PostsSheet = ({}) => {
   const { posts, columns } = useStore() as any as Store; //todo do this the right way)
@@ -85,6 +86,28 @@ export const PostsSheet = ({}) => {
 
         rows.push(postRow);
       });
+
+    const footerRow: CellWithMeta[] = [
+      {
+        value: "",
+      },
+      {
+        value: "",
+      },
+    ];
+
+    rows.push(
+      footerRow.concat(
+        columns.map((column) => {
+          return {
+            value: "",
+            column,
+            readOnly: false,
+            DataViewer: FooterCellViewer,
+          } as CellWithMeta;
+        })
+      )
+    );
 
     setData(rows);
   }, [posts, columns, curPage, perPage]);

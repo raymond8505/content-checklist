@@ -1,10 +1,11 @@
 import { Post, Store, useStore, Column } from "../store";
 
 const appHostParams = new URLSearchParams(location.search);
-const ajaxurl = appHostParams.get("ajaxurl");
 
 export const apiHost =
-  ajaxurl || "http://localhost/raymondsfood/wp-admin/admin-ajax.php";
+  // ajaxurl is defined by Wordpress, if it's not defined, we're not in the
+  // Wordpress environment, so use localhost
+  window["ajaxurl"] || "http://localhost/raymondsfood/wp-admin/admin-ajax.php";
 
 export const apiFetch = (action, opts = {}) => {
   return fetch(`${apiHost}?action=wpcc_${action}`, opts);

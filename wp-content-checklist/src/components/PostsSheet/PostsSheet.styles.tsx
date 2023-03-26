@@ -25,6 +25,10 @@ export const Wrapper = styled.div<{ contentLeft: number }>`
   tr:first-of-type {
     position: sticky;
     top: 2em;
+
+    #wpwrap & {
+      top: 32px;
+    }
     background: white;
     z-index: 3;
   }

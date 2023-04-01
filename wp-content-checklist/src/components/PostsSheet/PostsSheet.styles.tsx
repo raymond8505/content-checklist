@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 
 export const NameCellWrapper = styled.span`
   padding-right: 1em;
+  font-size: 1.1em;
 
   > a {
     color: #000;

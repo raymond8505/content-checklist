@@ -65,7 +65,7 @@ export const MainBody = () => {
         {showCreateColumn && <CreateColumnModal onClose={onCloseCreateColumnClick} />}
         <ColumnToolsModal onClose={()=>{
             setShowTools(false)
-        }}>
+        }} open={showTools}>
             test
         </ColumnToolsModal>
     </div>

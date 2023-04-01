@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 import { GlobalStyles } from './common/GlobalStyles';
 import styled from '@emotion/styled';
 import { PostsSheet } from './PostsSheet/PostsSheet';
-import {PlusCircleOutlined, SearchOutlined} from '@ant-design/icons'
+import {PlusCircleOutlined, ToolOutlined} from '@ant-design/icons'
 import { UnstyledButton } from './common/Button';
 
 const Header = styled.header`
@@ -52,7 +52,7 @@ export const MainBody = () => {
                 <PlusCircleOutlined />
             </UnstyledButton>
             <UnstyledButton>
-                <SearchOutlined />
+                <ToolOutlined />
             </UnstyledButton>
         </Header>
         <PostsSheet />

@@ -9,7 +9,7 @@ import { TitleCellViewer } from "./TitleCellViewer";
 import { ColumnCellEditor } from "./ColumnCellEditor";
 
 export const PostsSheet = ({ style = {} }: { style? }) => {
-  const { posts, columns, modals } = useStore() as any as Store; //todo do this the right way)
+  const { posts, columns, modals } = useStore();
   const [data, setData] = useState<Matrix<CellBase<any>>>([]);
   const [columnLabels, setColumnLabels] = useState<string[]>([]);
   const [rowLabels, setRowLabels] = useState<string[]>([]);

@@ -18,33 +18,35 @@ export interface Column {
 }
 export interface Store {
   posts: Post[];
-  setPosts: (newPosts: Post[]) => Post[];
+  setPosts: (newPosts: Post[]) => void;
   columns: Column[];
-  setColumns: (newColumns: Column[]) => Column[];
+  setColumns: (newColumns: Column[]) => void;
   modals: Record<string, boolean>;
   openModal: (string) => void;
 }
-export const useStore = create((set, get) => ({
-  posts: [],
-  modals: {
-    delete: false,
-    code: false,
-  },
-  openModal: (modal: string) =>
-    set({
-      modals: {
-        ...(get() as Store).modals,
-        [modal]: true,
-      },
-    }),
-  setPosts: (newPosts) =>
-    set({
-      posts: [...newPosts],
-    }),
+export const useStore = create<Store>(
+  (set, get): Store => ({
+    posts: [],
+    modals: {
+      delete: false,
+      code: false,
+    },
+    openModal: (modal: string) =>
+      set({
+        modals: {
+          ...get().modals,
+          [modal]: true,
+        },
+      }),
+    setPosts: (newPosts) =>
+      set({
+        posts: [...newPosts],
+      }),
 
-  columns: [],
-  setColumns: (newColumns) =>
-    set({
-      columns: [...newColumns],
-    }),
-}));
+    columns: [],
+    setColumns: (newColumns) =>
+      set({
+        columns: [...newColumns],
+      }),
+  })
+);

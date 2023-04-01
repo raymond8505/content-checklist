@@ -3,12 +3,16 @@ import styled from "@emotion/styled";
 export const NameCellWrapper = styled.span`
   padding-right: 1em;
   font-size: 1.1em;
+  display: flex;
+  align-items: stretch;
 
   > a {
     color: #000;
     text-decoration: none;
     margin-left: 0.4em;
     font-weight: bold;
+    display: flex;
+    align-items: center;
   }
 `;
 

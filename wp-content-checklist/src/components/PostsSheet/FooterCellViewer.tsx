@@ -11,7 +11,7 @@ import filterIcon from "../../assets/icons/filter.svg";
 
 export const FooterCellViewer: DataViewerComponent = ({ cell }) => {
   const { column } = cell as CellWithMeta;
-  const { openModal } = useStore() as any as Store;
+  const { openModal } = useStore();
   const updateFromServer = useServerUpdate();
 
   return column ? (

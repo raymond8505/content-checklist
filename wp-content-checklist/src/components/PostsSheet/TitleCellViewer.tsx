@@ -20,7 +20,7 @@ export const TitleCellViewer: DataViewerComponent = ({ cell }) => {
         </a>
       </ControlsWrapper>
       <a href={htmlDecode(post.urls.edit)} target="_blank">
-        {htmlDecode(post.title)}
+        <span>{htmlDecode(post.title)}</span>
       </a>
     </NameCellWrapper>
   ) : null;

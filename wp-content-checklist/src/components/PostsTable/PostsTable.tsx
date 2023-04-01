@@ -39,7 +39,7 @@ export interface Filter {
 }
 
 export const PostsTable = ({}) => {
-  const { posts, columns, setPosts } = useStore() as any as Store; //todo do this the right way
+  const { posts, columns, setPosts } = useStore();
 
   const updateFromServer = useServerUpdate();
 

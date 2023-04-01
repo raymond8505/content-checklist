@@ -7,7 +7,7 @@ import styled from '@emotion/styled';
 import { PostsSheet } from './PostsSheet/PostsSheet';
 import {PlusCircleOutlined, ToolOutlined} from '@ant-design/icons'
 import { UnstyledButton } from './common/Button';
-import {Modal} from 'antd'
+import {ConfigProvider, Modal} from 'antd'
 import ColumnToolsModal from './modals/ColumnToolsModal';
 
 const Header = styled.header`
@@ -19,7 +19,8 @@ const Header = styled.header`
     z-index: 9;
     display: flex;
     justify-content: flex-start;
-    padding: 0 1vw;
+    padding: .5em 1vw;
+    column-gap: 1em;
 
     button
     {
@@ -43,13 +44,17 @@ export const MainBody = () => {
     const onCloseCreateColumnClick = useCallback(()=>{
         setShowCreateColumn(false)
     })
-    return <>
+    return <ConfigProvider theme={{
+        token : {
+            colorPrimary : "#333"
+        }
+    }}>
         <GlobalStyles />
     <div className={css`
         background: white;
         width: 100vw;
         height: 100vh;
-        padding-top: 3em;
+        padding-top: 3.5em;
     `}>
         <Header>
             <UnstyledButton onClick={onCreateColumnClick} title="Add Column">
@@ -69,5 +74,5 @@ export const MainBody = () => {
             test
         </ColumnToolsModal>
     </div>
-    </>
+    </ConfigProvider>
   }

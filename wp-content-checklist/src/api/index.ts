@@ -15,7 +15,7 @@ export const apiFetch = (action, opts = {}) => {
  * @param {Function} cb
  */
 export const useServerUpdate = (cb = () => {}) => {
-  const { setPosts, setColumns } = useStore() as any as Store;
+  const { setPosts, setColumns } = useStore();
 
   return () => {
     apiFetch("init").then((resp) => {

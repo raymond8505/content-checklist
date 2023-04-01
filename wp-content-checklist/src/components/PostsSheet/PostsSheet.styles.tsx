@@ -1,11 +1,14 @@
 import styled from "@emotion/styled";
 
 export const NameCellWrapper = styled.span`
+  padding-right: 1em;
   a:nth-of-type(2) {
-    margin-left: 0.5em;
-    padding-left: 0.5em;
     display: inline-block;
     border-left: 1px solid black;
+  }
+  > *:not(first-child) {
+    margin-left: 0.5em;
+    padding-left: 0.5em;
   }
 `;
 

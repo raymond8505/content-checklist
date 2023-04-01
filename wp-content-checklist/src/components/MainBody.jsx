@@ -1,19 +1,33 @@
 import {css} from '@emotion/css'
-import { useEffect, useState } from 'react';
-import {PostsTable} from './PostsTable/PostsTable';
+import {  useState } from 'react';
 import CreateColumnModal from './modals/CreateColumnModal';
 import { useCallback } from 'react';
 import { GlobalStyles } from './common/GlobalStyles';
 import styled from '@emotion/styled';
 import { PostsSheet } from './PostsSheet/PostsSheet';
+import {PlusCircleOutlined, SearchOutlined} from '@ant-design/icons'
+import { UnstyledButton } from './common/Button';
 
 const Header = styled.header`
     width: 100%;
-    height: 2em;
+    height: 3em;
     background: white;
     position: fixed;
     top: 0;
     z-index: 9;
+    display: flex;
+    justify-content: flex-start;
+    padding: 0 1vw;
+
+    button
+    {
+        height: 100%;
+    }
+
+    svg {
+        width:3em;
+        height:3em;
+        }
 `
 export const MainBody = () => {
 
@@ -31,9 +45,15 @@ export const MainBody = () => {
         background: white;
         width: 100vw;
         height: 100vh;
+        padding-top: 3.5em;
     `}>
         <Header>
-            <button onClick={onCreateColumnClick}>Create Column</button>
+            <UnstyledButton onClick={onCreateColumnClick} title="Add Column">
+                <PlusCircleOutlined />
+            </UnstyledButton>
+            <UnstyledButton>
+                <SearchOutlined />
+            </UnstyledButton>
         </Header>
         <PostsSheet />
         {showCreateColumn && <CreateColumnModal onClose={onCloseCreateColumnClick} />}

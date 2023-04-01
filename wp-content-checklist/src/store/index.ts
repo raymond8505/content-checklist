@@ -21,9 +21,22 @@ export interface Store {
   setPosts: (newPosts: Post[]) => Post[];
   columns: Column[];
   setColumns: (newColumns: Column[]) => Column[];
+  modals: Record<string, boolean>;
+  openModal: (string) => void;
 }
 export const useStore = create((set, get) => ({
   posts: [],
+  modals: {
+    delete: false,
+    code: false,
+  },
+  openModal: (modal: string) =>
+    set({
+      modals: {
+        ...(get() as Store).modals,
+        [modal]: true,
+      },
+    }),
   setPosts: (newPosts) =>
     set({
       posts: [...newPosts],

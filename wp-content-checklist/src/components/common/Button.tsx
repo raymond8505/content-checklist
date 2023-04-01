@@ -11,3 +11,11 @@ export const Button = styled.button`
   outline: none;
   cursor: pointer;
 `;
+
+export const UnstyledButton = styled.button`
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+`;

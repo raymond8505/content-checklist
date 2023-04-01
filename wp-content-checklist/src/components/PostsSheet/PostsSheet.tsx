@@ -7,14 +7,13 @@ import { Wrapper } from "./PostsSheet.styles";
 import { CellWithMeta } from "./types";
 import { TitleCellViewer } from "./TitleCellViewer";
 import { ColumnCellEditor } from "./ColumnCellEditor";
-import { FooterCellViewer } from "./FooterCellViewer";
 
-export const PostsSheet = ({}) => {
-  const { posts, columns } = useStore() as any as Store; //todo do this the right way)
+export const PostsSheet = ({ style = {} }: { style? }) => {
+  const { posts, columns, modals } = useStore() as any as Store; //todo do this the right way)
   const [data, setData] = useState<Matrix<CellBase<any>>>([]);
   const [columnLabels, setColumnLabels] = useState<string[]>([]);
   const [rowLabels, setRowLabels] = useState<string[]>([]);
-  const perPage = 48;
+  const perPage = 49;
   const [curPage, setCurPage] = useState(0);
   const [contentLeft, setContentLeft] = useState(0);
 
@@ -87,32 +86,15 @@ export const PostsSheet = ({}) => {
         rows.push(postRow);
       });
 
-    const footerRow: CellWithMeta[] = [
-      {
-        value: "",
-      },
-      {
-        value: "",
-      },
-    ];
-
-    rows.push(
-      footerRow.concat(
-        columns.map((column) => {
-          return {
-            value: "",
-            column,
-            readOnly: false,
-            DataViewer: FooterCellViewer,
-          } as CellWithMeta;
-        })
-      )
-    );
-
     setData(rows);
   }, [posts, columns, curPage, perPage]);
+
+  useEffect(() => {
+    console.log(modals);
+  }, [modals]);
+
   return (
-    <Wrapper contentLeft={contentLeft}>
+    <Wrapper contentLeft={contentLeft} style={style}>
       <Spreadsheet
         data={data}
         columnLabels={columnLabels}

@@ -305,6 +305,16 @@ function wpcc_set_post_columns($post_id,$columns)
     {
         add_post_meta( $post_id,'wpcc_columns' , $columns );
     }
+
+    foreach($columns as $slug=>$val)
+    {
+        $func_name = slug_to_function($slug,'handle');
+
+        if(function_exists($func_name))
+        {
+            call_user_func($func_name,$val);
+        }
+    }
 }
 /**
  * $slug column slug

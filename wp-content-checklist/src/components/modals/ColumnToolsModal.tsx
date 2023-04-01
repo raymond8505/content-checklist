@@ -1,12 +1,28 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import { Modal } from "antd";
+import { Button, Modal, Radio } from "antd";
 import React from "react";
 import { useStore } from "../../store";
+import {
+  FilterOutlined,
+  ReloadOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import { ColumnValueSelect } from "../common/ColumnValueSelect";
 
 const Table = styled.table`
   width: 100%;
-  text-align: left;
+
+  td,
+  th {
+    text-align: center;
+    padding: 0.2em 0.4em;
+  }
+  td:first-child,
+  th:first-child,
+  td:nth-child(2) {
+    text-align: left;
+  }
 `;
 const ColumnToolsModal = ({ open, onClose }) => {
   const { columns } = useStore();
@@ -15,20 +31,63 @@ const ColumnToolsModal = ({ open, onClose }) => {
       open={open}
       title={"Column Tools"}
       onCancel={onClose}
-      width="90vw"
+      width="50vw"
       onOk={onClose}
     >
       <Table>
         <thead>
           <tr>
             <th>Column</th>
-            <th>Search</th>
-            <th>Filter</th>
+            {/* <th>Search</th> */}
+            <th
+              style={{
+                display: "flex",
+                justifyContent: "flex-start",
+                alignItems: "center",
+                columnGap: "5px",
+              }}
+            >
+              <Button icon={<ReloadOutlined />} title="Clear Filters" />
+              <span>Filter</span>
+            </th>
             <th>Check</th>
             <th>Handle</th>
           </tr>
         </thead>
-        <tbody></tbody>
+        <tbody>
+          {columns.map((column) => {
+            return (
+              <tr>
+                <th>{column.name}</th>
+                {/* <td>TBD</td> */}
+                <td>
+                  <ColumnValueSelect />
+                  <Radio.Group
+                    options={[
+                      {
+                        label: "AND",
+                        value: "and",
+                      },
+                      {
+                        label: "OR",
+                        value: "or",
+                      },
+                      {
+                        label: "NONE",
+                        value: "none",
+                      },
+                    ]}
+                    optionType="button"
+                    buttonStyle="solid"
+                  />
+                </td>
+                <td>
+                  <Button type="primary" icon={<SearchOutlined />} />
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
       </Table>
     </Modal>
   );

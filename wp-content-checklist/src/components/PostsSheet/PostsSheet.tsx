@@ -2,11 +2,12 @@ import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useStore, Store } from "../../store";
 import Spreadsheet, { CellBase, Matrix } from "react-spreadsheet";
 import { columnVal, getColumnVal, valueToClassName } from "../../helpers";
-import Pagination from "./Pagination/Pagination";
+// import Pagination from "./Pagination/Pagination";
 import { Wrapper } from "./PostsSheet.styles";
 import { CellWithMeta } from "./types";
 import { TitleCellViewer } from "./TitleCellViewer";
 import { ColumnCellEditor } from "./ColumnCellEditor";
+import { Pagination } from "antd";
 
 export const PostsSheet = ({ style = {} }: { style? }) => {
   const { posts, columns, modals } = useStore();
@@ -101,11 +102,24 @@ export const PostsSheet = ({ style = {} }: { style? }) => {
         rowLabels={rowLabels}
       />
 
-      <Pagination
+      {/* <Pagination
         perPage={perPage}
         curPage={curPage}
         total={posts.length}
         onChange={setCurPage}
+      /> */}
+      <Pagination
+        current={curPage}
+        pageSize={perPage}
+        total={posts.length}
+        onChange={setCurPage}
+        showSizeChanger={false}
+        simple={true}
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          padding: ".5em 0",
+        }}
       />
     </Wrapper>
   );

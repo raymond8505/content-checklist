@@ -2,13 +2,26 @@ import styled from "@emotion/styled";
 
 export const NameCellWrapper = styled.span`
   padding-right: 1em;
-  a:nth-of-type(2) {
-    display: inline-block;
-    border-left: 1px solid black;
+
+  > a {
+    color: #000;
+    text-decoration: none;
+    margin-left: 0.4em;
+    font-weight: bold;
   }
-  > *:not(first-child) {
-    margin-left: 0.5em;
-    padding-left: 0.5em;
+`;
+
+export const ControlsWrapper = styled.span`
+  &,
+  * {
+    color: #fff;
+  }
+  background: #444;
+  display: inline-block;
+  padding: 0.2em 0.4em;
+
+  > *:not(:first-child) {
+    margin-left: 0.4em;
   }
 `;
 

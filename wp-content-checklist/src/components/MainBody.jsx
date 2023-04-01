@@ -27,8 +27,8 @@ const Header = styled.header`
     }
 
     svg {
-        width:3em;
-        height:3em;
+        width:2em;
+        height:2em;
         }
 `
 export const MainBody = () => {
@@ -49,7 +49,7 @@ export const MainBody = () => {
         background: white;
         width: 100vw;
         height: 100vh;
-        padding-top: 3.5em;
+        padding-top: 3em;
     `}>
         <Header>
             <UnstyledButton onClick={onCreateColumnClick} title="Add Column">

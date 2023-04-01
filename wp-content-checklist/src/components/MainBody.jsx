@@ -7,6 +7,8 @@ import styled from '@emotion/styled';
 import { PostsSheet } from './PostsSheet/PostsSheet';
 import {PlusCircleOutlined, ToolOutlined} from '@ant-design/icons'
 import { UnstyledButton } from './common/Button';
+import {Modal} from 'antd'
+import ColumnToolsModal from './modals/ColumnToolsModal';
 
 const Header = styled.header`
     width: 100%;
@@ -32,6 +34,8 @@ const Header = styled.header`
 export const MainBody = () => {
 
     const [showCreateColumn,setShowCreateColumn] = useState(false)
+    const [showTools,setShowTools] = useState(false)
+
     console.log('main body');
     const onCreateColumnClick = useCallback(()=>{
         setShowCreateColumn(true)
@@ -51,12 +55,19 @@ export const MainBody = () => {
             <UnstyledButton onClick={onCreateColumnClick} title="Add Column">
                 <PlusCircleOutlined />
             </UnstyledButton>
-            <UnstyledButton>
+            <UnstyledButton onClick={()=>{
+                setShowTools(true)
+            }}>
                 <ToolOutlined />
             </UnstyledButton>
         </Header>
         <PostsSheet />
         {showCreateColumn && <CreateColumnModal onClose={onCloseCreateColumnClick} />}
+        <ColumnToolsModal onClose={()=>{
+            setShowTools(false)
+        }}>
+            test
+        </ColumnToolsModal>
     </div>
     </>
   }

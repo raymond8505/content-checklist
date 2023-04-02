@@ -16,6 +16,17 @@ export interface Column {
   name: string;
   slug: string;
 }
+
+export enum FilterInclusivity {
+  AND = "and",
+  OR = "or",
+  NONE = "none",
+}
+export interface Filter {
+  column: Column;
+  value: number | undefined;
+  inclusivity: FilterInclusivity;
+}
 export interface Store {
   posts: Post[];
   setPosts: (newPosts: Post[]) => void;
@@ -23,6 +34,8 @@ export interface Store {
   setColumns: (newColumns: Column[]) => void;
   modals: Record<string, boolean>;
   openModal: (string) => void;
+  filters: Filter[];
+  setFilters: (filters: Filter[]) => void;
 }
 export const useStore = create<Store>(
   (set, get): Store => ({
@@ -48,5 +61,7 @@ export const useStore = create<Store>(
       set({
         columns: [...newColumns],
       }),
+    filters: [],
+    setFilters: (filters) => set({ filters }),
   })
 );

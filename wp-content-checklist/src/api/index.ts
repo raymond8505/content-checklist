@@ -1,4 +1,11 @@
-import { Post, Store, useStore, Column } from "../store";
+import {
+  Post,
+  Store,
+  useStore,
+  Column,
+  Filter,
+  FilterInclusivity,
+} from "../store";
 
 const appHostParams = new URLSearchParams(location.search);
 
@@ -15,7 +22,7 @@ export const apiFetch = (action, opts = {}) => {
  * @param {Function} cb
  */
 export const useServerUpdate = (cb = () => {}) => {
-  const { setPosts, setColumns } = useStore();
+  const { setPosts, setColumns, filters, setFilters } = useStore();
 
   return () => {
     apiFetch("init").then((resp) => {
@@ -42,6 +49,18 @@ export const useServerUpdate = (cb = () => {}) => {
             })
         );
         setColumns(json.columns);
+
+        if (!filters.length) {
+          setFilters(
+            json.columns.map((column) => {
+              return {
+                column,
+                inclusivity: FilterInclusivity.NONE,
+                value: undefined,
+              } as Filter;
+            })
+          );
+        }
         cb();
       });
     });

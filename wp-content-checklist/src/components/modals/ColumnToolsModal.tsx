@@ -23,9 +23,13 @@ const Table = styled.table`
   td:nth-child(2) {
     text-align: left;
   }
+
+  thead tr > * {
+    background: #eee;
+  }
 `;
 const ColumnToolsModal = ({ open, onClose }) => {
-  const { columns } = useStore();
+  const { columns, filters, setFilters } = useStore();
   return (
     <Modal
       open={open}
@@ -56,12 +60,15 @@ const ColumnToolsModal = ({ open, onClose }) => {
         </thead>
         <tbody>
           {columns.map((column) => {
+            const filter = filters.find(
+              (filter) => filter.column.slug === column.slug
+            );
             return (
-              <tr>
+              <tr key={column.slug}>
                 <th>{column.name}</th>
                 {/* <td>TBD</td> */}
                 <td>
-                  <ColumnValueSelect />
+                  <ColumnValueSelect value={filter?.value} />
                   <Radio.Group
                     options={[
                       {

@@ -1,8 +1,8 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { Button, Modal, Radio } from "antd";
-import React from "react";
-import { useStore } from "../../store";
+import React, { SyntheticEvent } from "react";
+import { FilterInclusivity, useStore } from "../../store";
 import {
   FilterOutlined,
   ReloadOutlined,
@@ -68,7 +68,21 @@ const ColumnToolsModal = ({ open, onClose }) => {
                 <th>{column.name}</th>
                 {/* <td>TBD</td> */}
                 <td>
-                  <ColumnValueSelect value={filter?.value} />
+                  <ColumnValueSelect
+                    value={filter?.value}
+                    onChange={(val) => {
+                      setFilters(
+                        filters.map((f) => {
+                          if (f.column.slug !== column.slug) return f;
+
+                          const newF = { ...f };
+                          newF.value = val;
+
+                          return newF;
+                        })
+                      );
+                    }}
+                  />
                   <Radio.Group
                     options={[
                       {
@@ -86,6 +100,20 @@ const ColumnToolsModal = ({ open, onClose }) => {
                     ]}
                     optionType="button"
                     buttonStyle="solid"
+                    defaultValue={filter?.inclusivity}
+                    onChange={(e: SyntheticEvent<HTMLInputElement>) => {
+                      console.log({ e });
+                      setFilters(
+                        filters.map((f) => {
+                          if (f.column.slug !== column.slug) return f;
+
+                          const newF = { ...f };
+                          newF.inclusivity = (e.target as HTMLInputElement)
+                            .value as FilterInclusivity;
+                          return newF;
+                        })
+                      );
+                    }}
                   />
                 </td>
                 <td>

@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { useStore, Store } from "../../store";
+import { useStore, Store, FilterInclusivity } from "../../store";
 import Spreadsheet, { CellBase, Matrix } from "react-spreadsheet";
 import { columnVal, getColumnVal, valueToClassName } from "../../helpers";
 // import Pagination from "./Pagination/Pagination";
@@ -10,13 +10,41 @@ import { ColumnCellEditor } from "./ColumnCellEditor";
 import { Pagination } from "antd";
 
 export const PostsSheet = ({ style = {} }: { style? }) => {
-  const { posts, columns, modals } = useStore();
+  const { posts, columns, modals, filters } = useStore();
   const [data, setData] = useState<Matrix<CellBase<any>>>([]);
   const [columnLabels, setColumnLabels] = useState<string[]>([]);
   const [rowLabels, setRowLabels] = useState<string[]>([]);
   const perPage = 49;
   const [curPage, setCurPage] = useState(0);
   const [contentLeft, setContentLeft] = useState(0);
+  const [postsToShow, setPostsToShow] = useState(posts);
+
+  useEffect(() => {
+    const activeFilters = filters.filter(
+      (filter) => filter.inclusivity !== FilterInclusivity.NONE
+    );
+
+    console.log({ activeFilters });
+    setPostsToShow(
+      posts.filter((post) => {
+        for (const filter of activeFilters) {
+          const matches = post.columns[filter.column.slug] === filter.value;
+
+          //filter is AND and it doesn't match, so hide regardless of other filters
+          if (filter.inclusivity === FilterInclusivity.AND && !matches) {
+            return false;
+          }
+
+          if (filter.inclusivity === FilterInclusivity.OR && matches) {
+            return true;
+          }
+        }
+
+        // if there's no active filters, show all posts
+        return activeFilters.length === 0;
+      })
+    );
+  }, [posts, filters]);
 
   useLayoutEffect(() => {
     //adminmenuwrap
@@ -33,7 +61,7 @@ export const PostsSheet = ({ style = {} }: { style? }) => {
 
       setContentLeft(paddingLeft + contentRect.left);
     }
-  }, [posts, columns, curPage, perPage]);
+  }, [postsToShow, columns, curPage, perPage]);
 
   useEffect(() => {
     const emptyRow = new Array(columns.length + 2);
@@ -50,12 +78,12 @@ export const PostsSheet = ({ style = {} }: { style? }) => {
 
     setRowLabels([
       "",
-      ...posts
+      ...postsToShow
         .slice(curPage * perPage, curPage * perPage + perPage)
         .map((p) => String(p.ID)),
     ]);
 
-    posts
+    postsToShow
       .slice(curPage * perPage, curPage * perPage + perPage)
       .forEach((post) => {
         const postRow: CellBase<any>[] = [];
@@ -88,7 +116,7 @@ export const PostsSheet = ({ style = {} }: { style? }) => {
       });
 
     setData(rows);
-  }, [posts, columns, curPage, perPage]);
+  }, [postsToShow, columns, curPage, perPage]);
 
   useEffect(() => {
     console.log(modals);
@@ -111,7 +139,7 @@ export const PostsSheet = ({ style = {} }: { style? }) => {
       <Pagination
         current={curPage}
         pageSize={perPage}
-        total={posts.length}
+        total={postsToShow.length}
         onChange={setCurPage}
         showSizeChanger={false}
         simple={true}

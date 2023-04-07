@@ -5,7 +5,17 @@ import { CellWithMeta } from "./types";
 import React from "react";
 import { UnstyledButton } from "../common/Button";
 import { LinkOutlined, SearchOutlined } from "@ant-design/icons";
+import styled from "@emotion/styled";
 
+const EditLink = styled.a`
+  span {
+    max-width: 40ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+  }
+`;
 export const TitleCellViewer: DataViewerComponent = ({ cell }) => {
   const { post } = cell as CellWithMeta;
 
@@ -19,9 +29,9 @@ export const TitleCellViewer: DataViewerComponent = ({ cell }) => {
           <LinkOutlined />
         </a>
       </ControlsWrapper>
-      <a href={htmlDecode(post.urls.edit)} target="_blank">
+      <EditLink href={htmlDecode(post.urls.edit)} target="_blank">
         <span>{htmlDecode(post.title)}</span>
-      </a>
+      </EditLink>
     </NameCellWrapper>
   ) : null;
 };

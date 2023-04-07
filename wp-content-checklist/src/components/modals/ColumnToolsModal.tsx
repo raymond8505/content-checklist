@@ -1,14 +1,15 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { Button, Modal, Radio } from "antd";
-import React, { SyntheticEvent } from "react";
+import React, { SyntheticEvent, useState } from "react";
 import { FilterInclusivity, useStore } from "../../store";
 import {
-  FilterOutlined,
+  HourglassOutlined,
   ReloadOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
 import { ColumnValueSelect } from "../common/ColumnValueSelect";
+import { checkColumn, useServerUpdate } from "../../api";
 
 const Table = styled.table`
   width: 100%;
@@ -30,6 +31,12 @@ const Table = styled.table`
 `;
 const ColumnToolsModal = ({ open, onClose }) => {
   const { columns, filters, setFilters } = useStore();
+  const updateFromServer = useServerUpdate(() => {
+    setLoading("");
+    //onClose();
+  });
+  const [loading, setLoading] = useState("");
+
   return (
     <Modal
       open={open}
@@ -117,7 +124,22 @@ const ColumnToolsModal = ({ open, onClose }) => {
                   />
                 </td>
                 <td>
-                  <Button type="primary" icon={<SearchOutlined />} />
+                  <Button
+                    type="primary"
+                    disabled={loading === column.slug}
+                    icon={
+                      loading === column.slug ? (
+                        <HourglassOutlined />
+                      ) : (
+                        <SearchOutlined />
+                      )
+                    }
+                    onClick={() => {
+                      checkColumn(column.slug);
+                      setLoading(column.slug);
+                      updateFromServer();
+                    }}
+                  />
                 </td>
               </tr>
             );

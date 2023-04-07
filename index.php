@@ -327,6 +327,8 @@ function wpcc_set_column($slug,$post_id,$val,$overwrite_if = null)
     $has_meta = metadata_exists('post',$post_id,'wpcc_columns');
     $columns = $has_meta ? get_post_meta( $post_id, 'wpcc_columns', true ) : [];
 
+    if(!is_array($columns)) return;
+
     if($val === null)
     {
         if(isset($columns[$slug]))

@@ -80,5 +80,10 @@ th,td
 	  transform: rotate(360deg);
 	}
   }
+
+  .wp-admin #main-header
+  {
+	top: 35px;
+  }
 `} />
 }

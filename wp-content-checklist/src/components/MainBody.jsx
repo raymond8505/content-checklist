@@ -31,6 +31,7 @@ const Header = styled.header`
         width:2em;
         height:2em;
         }
+    
 `
 export const MainBody = () => {
 
@@ -57,7 +58,7 @@ export const MainBody = () => {
         height: 100vh;
         padding-top: 3.5em;
     `}>
-        <Header>
+        <Header id="main-header">
             <UnstyledButton onClick={onCreateColumnClick} title="Add Column">
                 <PlusCircleOutlined />
             </UnstyledButton>

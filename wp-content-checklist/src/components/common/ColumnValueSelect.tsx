@@ -9,6 +9,7 @@ export const ColumnValueSelect = ({ value, onChange }: Props) => {
   const $value = value === undefined ? -2 : value;
   return (
     <Select
+      onChange={onChange}
       style={{
         width: "5em",
         marginRight: "3px",

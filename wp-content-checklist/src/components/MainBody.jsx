@@ -46,7 +46,8 @@ export const MainBody = () => {
     })
     return <ConfigProvider theme={{
         token : {
-            colorPrimary : "#333"
+            colorPrimary : "#333",
+            borderRadius: 3
         }
     }}>
         <GlobalStyles />

@@ -24,26 +24,33 @@ export const PostsSheet = ({ style = {} }: { style? }) => {
       (filter) => filter.inclusivity !== FilterInclusivity.NONE
     );
 
-    console.log({ activeFilters });
     setPostsToShow(
       posts.filter((post) => {
+        const matchResults: boolean[] = [];
+        let shouldShow = true;
+
         for (const filter of activeFilters) {
           const matches = post.columns[filter.column.slug] === filter.value;
 
+          console.log({ matches, post: post.title, filter });
+
           //filter is AND and it doesn't match, so hide regardless of other filters
-          if (filter.inclusivity === FilterInclusivity.AND && !matches) {
-            return false;
+          if (filter.inclusivity === FilterInclusivity.AND) {
+            shouldShow = matches;
           }
 
           if (filter.inclusivity === FilterInclusivity.OR && matches) {
-            return true;
+            shouldShow = true;
           }
+
+          matchResults.push(shouldShow);
         }
 
-        // if there's no active filters, show all posts
-        return activeFilters.length === 0;
+        return !matchResults.includes(false);
       })
     );
+
+    setCurPage(1);
   }, [posts, filters]);
 
   useLayoutEffect(() => {

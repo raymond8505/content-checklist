@@ -1,3 +1,4 @@
+import { CellValue } from "../components/PostsSheet/types";
 import {
   Post,
   Store,
@@ -56,7 +57,7 @@ export const useServerUpdate = (cb = () => {}) => {
               return {
                 column,
                 inclusivity: FilterInclusivity.NONE,
-                value: undefined,
+                value: CellValue.UNSET,
               } as Filter;
             })
           );

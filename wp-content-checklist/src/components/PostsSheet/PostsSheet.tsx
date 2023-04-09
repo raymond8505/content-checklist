@@ -24,30 +24,33 @@ export const PostsSheet = ({ style = {} }: { style? }) => {
       (filter) => filter.inclusivity !== FilterInclusivity.NONE
     );
 
+    console.log(posts);
     setPostsToShow(
-      posts.filter((post) => {
-        const matchResults: boolean[] = [];
-        let shouldShow = true;
+      activeFilters.length
+        ? posts.filter((post) => {
+            const matchResults: boolean[] = [];
+            let shouldShow = true;
 
-        for (const filter of activeFilters) {
-          const matches = post.columns[filter.column.slug] === filter.value;
+            for (const filter of activeFilters) {
+              const matches = post.columns[filter.column.slug] === filter.value;
 
-          console.log({ matches, post: post.title, filter });
+              console.log({ matches, post: post.title, filter });
 
-          //filter is AND and it doesn't match, so hide regardless of other filters
-          if (filter.inclusivity === FilterInclusivity.AND) {
-            shouldShow = matches;
-          }
+              //filter is AND and it doesn't match, so hide regardless of other filters
+              if (filter.inclusivity === FilterInclusivity.AND) {
+                shouldShow = matches;
+              }
 
-          if (filter.inclusivity === FilterInclusivity.OR && matches) {
-            shouldShow = true;
-          }
+              if (filter.inclusivity === FilterInclusivity.OR && matches) {
+                shouldShow = true;
+              }
 
-          matchResults.push(shouldShow);
-        }
+              matchResults.push(shouldShow);
+            }
 
-        return !matchResults.includes(false);
-      })
+            return !matchResults.includes(false);
+          })
+        : posts
     );
 
     setCurPage(1);
@@ -72,6 +75,7 @@ export const PostsSheet = ({ style = {} }: { style? }) => {
 
   useEffect(() => {
     const emptyRow = new Array(columns.length + 2);
+    const realCurPage = curPage - 1;
 
     emptyRow.fill(
       {
@@ -86,12 +90,12 @@ export const PostsSheet = ({ style = {} }: { style? }) => {
     setRowLabels([
       "",
       ...postsToShow
-        .slice(curPage * perPage, curPage * perPage + perPage)
+        .slice(realCurPage * perPage, realCurPage * perPage + perPage)
         .map((p) => String(p.ID)),
     ]);
 
     postsToShow
-      .slice(curPage * perPage, curPage * perPage + perPage)
+      .slice(realCurPage * perPage, realCurPage * perPage + perPage)
       .forEach((post) => {
         const postRow: CellBase<any>[] = [];
 

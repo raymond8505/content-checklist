@@ -10,6 +10,7 @@ import {
 } from "@ant-design/icons";
 import { ColumnValueSelect } from "../common/ColumnValueSelect";
 import { checkColumn, useServerUpdate } from "../../api";
+import CopyFunctionModal from "./CopyFunctionModal";
 
 const Table = styled.table`
   width: 100%;
@@ -36,117 +37,130 @@ const ColumnToolsModal = ({ open, onClose }) => {
     //onClose();
   });
   const [loading, setLoading] = useState("");
+  const [missingFunction, setMissingFunction] = useState("");
 
   return (
-    <Modal
-      open={open}
-      title={"Column Tools"}
-      onCancel={onClose}
-      width="50vw"
-      onOk={onClose}
-    >
-      <Table>
-        <thead>
-          <tr>
-            <th>Column</th>
-            {/* <th>Search</th> */}
-            <th
-              style={{
-                display: "flex",
-                justifyContent: "flex-start",
-                alignItems: "center",
-                columnGap: "5px",
-              }}
-            >
-              <Button icon={<ReloadOutlined />} title="Clear Filters" />
-              <span>Filter</span>
-            </th>
-            <th>Check</th>
-            <th>Handle</th>
-          </tr>
-        </thead>
-        <tbody>
-          {columns.map((column) => {
-            const filter = filters.find(
-              (filter) => filter.column.slug === column.slug
-            );
-            return (
-              <tr key={column.slug}>
-                <th>{column.name}</th>
-                {/* <td>TBD</td> */}
-                <td>
-                  <ColumnValueSelect
-                    value={filter?.value}
-                    onChange={(val) => {
-                      setFilters(
-                        filters.map((f) => {
-                          if (f.column.slug !== column.slug) return f;
+    <>
+      <Modal
+        open={open}
+        title={"Column Tools"}
+        onCancel={onClose}
+        width="50vw"
+        onOk={onClose}
+      >
+        <Table>
+          <thead>
+            <tr>
+              <th>Column</th>
+              {/* <th>Search</th> */}
+              <th
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                  columnGap: "5px",
+                }}
+              >
+                <Button icon={<ReloadOutlined />} title="Clear Filters" />
+                <span>Filter</span>
+              </th>
+              <th>Check</th>
+              <th>Handle</th>
+            </tr>
+          </thead>
+          <tbody>
+            {columns.map((column) => {
+              const filter = filters.find(
+                (filter) => filter.column.slug === column.slug
+              );
+              return (
+                <tr key={column.slug}>
+                  <th>{column.name}</th>
+                  {/* <td>TBD</td> */}
+                  <td>
+                    <ColumnValueSelect
+                      value={filter?.value}
+                      onChange={(val) => {
+                        setFilters(
+                          filters.map((f) => {
+                            if (f.column.slug !== column.slug) return f;
 
-                          const newF = { ...f };
-                          newF.value = val;
+                            const newF = { ...f };
+                            newF.value = val;
 
-                          return newF;
-                        })
-                      );
-                    }}
-                  />
-                  <Radio.Group
-                    options={[
-                      {
-                        label: "AND",
-                        value: "and",
-                      },
-                      {
-                        label: "OR",
-                        value: "or",
-                      },
-                      {
-                        label: "NONE",
-                        value: "none",
-                      },
-                    ]}
-                    optionType="button"
-                    buttonStyle="solid"
-                    defaultValue={filter?.inclusivity}
-                    onChange={(e: SyntheticEvent<HTMLInputElement>) => {
-                      console.log({ e });
-                      setFilters(
-                        filters.map((f) => {
-                          if (f.column.slug !== column.slug) return f;
+                            return newF;
+                          })
+                        );
+                      }}
+                    />
+                    <Radio.Group
+                      options={[
+                        {
+                          label: "AND",
+                          value: "and",
+                        },
+                        {
+                          label: "OR",
+                          value: "or",
+                        },
+                        {
+                          label: "NONE",
+                          value: "none",
+                        },
+                      ]}
+                      optionType="button"
+                      buttonStyle="solid"
+                      defaultValue={filter?.inclusivity}
+                      onChange={(e: SyntheticEvent<HTMLInputElement>) => {
+                        console.log({ e });
+                        setFilters(
+                          filters.map((f) => {
+                            if (f.column.slug !== column.slug) return f;
 
-                          const newF = { ...f };
-                          newF.inclusivity = (e.target as HTMLInputElement)
-                            .value as FilterInclusivity;
-                          return newF;
-                        })
-                      );
-                    }}
-                  />
-                </td>
-                <td>
-                  <Button
-                    type="primary"
-                    disabled={loading === column.slug}
-                    icon={
-                      loading === column.slug ? (
-                        <HourglassOutlined />
-                      ) : (
-                        <SearchOutlined />
-                      )
-                    }
-                    onClick={() => {
-                      checkColumn(column.slug);
-                      setLoading(column.slug);
-                      updateFromServer();
-                    }}
-                  />
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </Table>
-    </Modal>
+                            const newF = { ...f };
+                            newF.inclusivity = (e.target as HTMLInputElement)
+                              .value as FilterInclusivity;
+                            return newF;
+                          })
+                        );
+                      }}
+                    />
+                  </td>
+                  <td>
+                    <Button
+                      type="primary"
+                      disabled={loading === column.slug}
+                      icon={
+                        loading === column.slug ? (
+                          <HourglassOutlined />
+                        ) : (
+                          <SearchOutlined />
+                        )
+                      }
+                      onClick={() => {
+                        checkColumn(column.slug).catch((e) => {
+                          setMissingFunction(e.error);
+                        });
+                        setLoading(column.slug);
+                        updateFromServer();
+                      }}
+                    />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </Table>
+      </Modal>
+
+      <CopyFunctionModal
+        functionName={missingFunction}
+        onClose={() => {
+          setMissingFunction("");
+        }}
+        open={missingFunction !== ""}
+      />
+    </>
   );
 };
 

@@ -29,25 +29,16 @@ export const useServerUpdate = (cb = () => {}) => {
     apiFetch("init").then((resp) => {
       resp.json().then((json) => {
         setPosts(
-          json.posts
-            .map((post) => {
-              return {
-                ...post,
-                urls: {
-                  view: decodeURIComponent(post.urls.view),
-                  edit: decodeURIComponent(post.urls.edit),
-                } as unknown as Post,
-              };
-            })
-            .map((post) => {
-              return {
-                ...post,
-                posted: new Date(post.posted),
-              };
-            })
-            .sort((a: Post, b: Post) => {
-              return a.posted.getTime() > b.posted.getTime() ? -1 : 1;
-            })
+          json.posts.map((post) => {
+            return {
+              ...post,
+              posted: new Date(post.posted),
+              urls: {
+                view: decodeURIComponent(post.urls.view),
+                edit: decodeURIComponent(post.urls.edit),
+              } as unknown as Post,
+            };
+          })
         );
         setColumns(json.columns);
 

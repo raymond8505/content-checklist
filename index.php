@@ -48,8 +48,8 @@ function init_client()
     //new dBug($_SERVER);
     $all_posts = new WP_Query([
         'post_type'=>'post',
-        'orderby'=>'post_title',
-        'order'=>'asc',
+        'orderby'=>'post_date',
+        'order'=>'desc',
         'posts_per_page'=>-1
     ]);
 
@@ -108,9 +108,7 @@ function init_playground()
 
     $columns = get_columns();
 
-    //new dBug($columns);
-
-    echo '<script src="' . plugin_dir_url('/content-checklist/playground/playground.js') . 'playground.js"></.+src=';
+    echo '<script src="' . plugin_dir_url('/content-checklist/playground/playground.js') . 'playground.js"></script>';
 
     echo '<h3>';
     foreach($columns as $i=>$column)
@@ -327,7 +325,7 @@ function wpcc_set_column($slug,$post_id,$val,$overwrite_if = null)
     $has_meta = metadata_exists('post',$post_id,'wpcc_columns');
     $columns = $has_meta ? get_post_meta( $post_id, 'wpcc_columns', true ) : [];
 
-    if(!is_array($columns)) return;
+    $columns = (array) $columns;
 
     if($val === null)
     {
